@@ -3,7 +3,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InterfaceCameraFlow : MonoBehaviour
+public class UIHandler : MonoBehaviour
 {
     [SerializeField] Camera playerCamera;
     public Transform target;
@@ -16,17 +16,20 @@ public class InterfaceCameraFlow : MonoBehaviour
     private GameObject ServerStatus;
     private GameObject NetworkManager;
     private NetworkManager networkManagerScript;
+    public GameObject PresentationButtons;
 
     // Start is called before the first frame update
     void Start()
     {
+        PresentationButtons = GameObject.Find("PresentationButtons");
+        PresentationButtons.SetActive(false);
         NetworkManager = GameObject.Find("Network Manager");
         networkManagerScript = NetworkManager.GetComponent<NetworkManager>();
         PlayerUI = GameObject.Find("PlayerUI");
         ActualRoom = GameObject.Find("ActualRoomText");
         ButtonConnect = GameObject.Find("Connect2ServerButton");
         ServerStatus = GameObject.Find("DisconnectedText");
-        GameObject.Find("ServerInput").GetComponent<InputField>().text = "172.30.40.34";
+        GameObject.Find("ServerInput").GetComponent<InputField>().text = "192.168.1.12";
         GameObject.Find("RoomInput").GetComponent<InputField>().text = "1";
         PlayerUI.SetActive(false);
         target = playerCamera.transform;
@@ -107,7 +110,7 @@ public class InterfaceCameraFlow : MonoBehaviour
     // Rejoindre une salle
     public void JoinRoom()
     {
-        networkManagerScript.JoinRoom();
+        networkManagerScript.JoinOrCreateRoom();
     }
 
     // Quitter une salle

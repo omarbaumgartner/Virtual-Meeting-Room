@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 
-public class NetworkPlayer : MonoBehaviour
+public class NetworkPlayerViewer : MonoBehaviour
 {
     public Transform head;
     public Transform leftHand;

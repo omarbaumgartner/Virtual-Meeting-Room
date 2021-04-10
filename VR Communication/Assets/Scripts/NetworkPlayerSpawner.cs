@@ -2,7 +2,7 @@
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 
-public class NetworkManagerPlayerSpawner : MonoBehaviourPunCallbacks
+public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
 {
 
     // Création du joueur lorsqu'il se connecte à une room

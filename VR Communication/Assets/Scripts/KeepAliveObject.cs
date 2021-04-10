@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeepAlive : MonoBehaviour
+public class KeepAliveObject : MonoBehaviour
 {
-    private static KeepAlive playerInstance;
+    private static KeepAliveObject playerInstance;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,7 +15,7 @@ public class KeepAlive : MonoBehaviour
         }
         else
         {
-            DestroyObject(gameObject);
+            Object.Destroy(gameObject);
         }
     }
 

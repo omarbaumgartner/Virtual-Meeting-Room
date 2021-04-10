@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ViveRigDetector : MonoBehaviour
+public class VivePointersSynchronizer : MonoBehaviour
 {   // Script permettant de transformer la position des vive pointers vers les positions des manettes Vive.
 
     [SerializeField]
@@ -10,10 +10,8 @@ public class ViveRigDetector : MonoBehaviour
     // Synchronisation des pointeurs avec les manettes
     void Start()
     {
-        
             gameObject.transform.position = GameObject.Find(ViveControllerName).transform.position;
             gameObject.transform.rotation = GameObject.Find(ViveControllerName).transform.rotation;
-        
     }
 
     // Update is called once per frame

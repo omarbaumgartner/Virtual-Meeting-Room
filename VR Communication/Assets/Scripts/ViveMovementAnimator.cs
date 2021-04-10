@@ -18,7 +18,7 @@ public class VRMAP
     }
 }
 
-public class VRrig : MonoBehaviour
+public class ViveMovementAnimator : MonoBehaviour
 {
     [SerializeField]
     public float turnSmoothness;

@@ -2,11 +2,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class viveDetector : MonoBehaviour
+public class ViveAvatarInitSynchronizer : MonoBehaviour
 {
-    private VRrig VRigScript;
+    private ViveMovementAnimator VRigScript;
     private PhotonView photonView;
 
+    // Synchronisation des manettes + casque avec l'avatar lors de la création de ce dernier
     // Start is called before the first frame update
     void Start()
     {
@@ -14,7 +15,7 @@ public class viveDetector : MonoBehaviour
         string sceneName = m_Scene.name;
         Debug.Log("Scene name : " + sceneName);
         photonView = GetComponent<PhotonView>();
-        VRigScript = GetComponent<VRrig>();
+        VRigScript = GetComponent<ViveMovementAnimator>();
         Debug.Log("photonView.IsMine : " + photonView.IsMine);
         if (photonView.IsMine)
         {

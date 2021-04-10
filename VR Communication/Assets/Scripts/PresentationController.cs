@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class Web : MonoBehaviour
+public class PresentationController : MonoBehaviour
 {
     // Start is called before the first frame update
 
@@ -14,10 +15,23 @@ public class Web : MonoBehaviour
     int slideNumber = 0;
     int actualSlide;
     int diapoHeight = 1500;
+    PhotonView photonView;
 
     void Start()
     {
-
+        photonView = GetComponent<PhotonView>();
+        Debug.Log("Board is mine : "+photonView.IsMine);
+        if (photonView.IsMine)
+        {
+            GameObject FixedUI = GameObject.Find("FixedUI");
+            FixedUI.GetComponent<UIHandler>().PresentationButtons.SetActive(true);
+            Button refreshButton = GameObject.Find("refreshSlideButton").GetComponent<Button>();
+            refreshButton.onClick.AddListener(refresh);
+            Button nextButton = GameObject.Find("nextSlideButton").GetComponent<Button>();
+            nextButton.onClick.AddListener(next);
+            Button previousButton = GameObject.Find("previousSlideButton").GetComponent<Button>();
+            previousButton.onClick.AddListener(previous);
+        }
     }
 
     // Update is called once per frame
@@ -26,17 +40,31 @@ public class Web : MonoBehaviour
 
     }
 
+    void refresh()
+    {
+        photonView.RPC("refreshDiapo", RpcTarget.All);
+    }
 
+    void next()
+    {
+        photonView.RPC("nextSlide", RpcTarget.All);
+    }
+
+    void previous()
+    {
+        photonView.RPC("previousSlide", RpcTarget.All);
+    }
+
+    [PunRPC]
     public void refreshDiapo()
     {
         StartCoroutine(LoadTextureFromWeb());
     }
 
 
+    [PunRPC]
     public void nextSlide()
     {
-        Debug.Log("slideNumber " + slideNumber);
-        Debug.Log("actualSlide " + actualSlide);
         if (actualSlide-1 >= 0)
         {
             actualSlide -= 1;
@@ -48,10 +76,9 @@ public class Web : MonoBehaviour
         }
     }
 
+    [PunRPC]
     public void previousSlide() 
     {
-        Debug.Log("slideNumber " + slideNumber);
-        Debug.Log("actualSlide " + actualSlide);
         if (actualSlide+1 < slideNumber)
         {
             actualSlide += 1;
@@ -82,7 +109,6 @@ public class Web : MonoBehaviour
                 Debug.Log("Nombre de slides  : "+ slideNumber);
                 textureImage.sprite = Sprite.Create(loadedTexture, new Rect(0f, 1500f*(slideNumber-1), loadedTexture.width, loadedTexture.height/ slideNumber), Vector2.zero);
                 actualSlide = slideNumber - 1; // Premier slide = n-1 , second slide n-2, ... , 0
-                //textureImage.SetNativeSize();
             }
         }
     }
