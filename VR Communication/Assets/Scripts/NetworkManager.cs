@@ -27,7 +27,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
             InputField InputServer = GameObject.Find("ServerInput").GetComponent<InputField>();
             PhotonNetwork.PhotonServerSettings.AppSettings.Server = InputServer.text;
             Debug.Log("Connecting to " + PhotonNetwork.PhotonServerSettings.AppSettings.Server);
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.SerializationProtocolType = ExitGames.Client.Photon.SerializationProtocol.GpBinaryV16;
+            PhotonNetwork.PhotonServerSettings.AppSettings.UseNameServer = false;
+            PhotonNetwork.PhotonServerSettings.AppSettings.Server = "192.168.1.12";
+            PhotonNetwork.PhotonServerSettings.AppSettings.Port = 5055;
+            PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = null;
             PhotonNetwork.ConnectUsingSettings();
+            //ConnectUsingSettings();
         }
         else
         {
@@ -155,6 +161,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         serverStatus.text = "Disconnected";
         Text ButtonConnectText = GameObject.Find("ConnectText").GetComponent<Text>();
         ButtonConnectText.text = "Connect";
+        Debug.Log(cause);
         base.OnDisconnected(cause);
     }
 

@@ -62,11 +62,18 @@ namespace Photon.Pun
         }
 
         /// <summary>
-        /// Returns an iterable collection of current photon views.
+        /// Returns a new iterable collection of current photon views.
         /// </summary>
+        /// <remarks>
+        /// You can iterate over all PhotonViews in a simple foreach loop.
+        /// To use this in a while-loop, assign the new iterator to a variable and then call MoveNext on that.
+        /// </remarks>
         public static NonAllocDictionary<int, PhotonView>.ValueIterator PhotonViewCollection
         {
-            get { return photonViewList.Values; }
+            get
+            {
+                return photonViewList.Values;
+            }
         }
 
         public static int ViewCount
@@ -78,6 +85,8 @@ namespace Photon.Pun
         private static event Action<PhotonView, Player> OnOwnershipRequestEv;
         /// <summary>Parameters: PhotonView for which ownership was requested, player who requests ownership.</summary>
         private static event Action<PhotonView, Player> OnOwnershipTransferedEv;
+        /// <summary>Parameters: PhotonView for which ownership was requested, player who requested (but didn't get) ownership.</summary>
+        private static event Action<PhotonView, Player> OnOwnershipTransferFailedEv;
 
         /// <summary>
         /// Registers an object for callbacks for the implemented callback-interfaces.
@@ -101,6 +110,7 @@ namespace Photon.Pun
             {
                 OnOwnershipRequestEv += punOwnershipCallback.OnOwnershipRequest;
                 OnOwnershipTransferedEv += punOwnershipCallback.OnOwnershipTransfered;
+                OnOwnershipTransferFailedEv += punOwnershipCallback.OnOwnershipTransferFailed;
             }
 
             NetworkingClient.AddCallbackTarget(target);
@@ -129,6 +139,7 @@ namespace Photon.Pun
             {
                 OnOwnershipRequestEv -= punOwnershipCallback.OnOwnershipRequest;
                 OnOwnershipTransferedEv -= punOwnershipCallback.OnOwnershipTransfered;
+                OnOwnershipTransferFailedEv -= punOwnershipCallback.OnOwnershipTransferFailed;
             }
 
             NetworkingClient.RemoveCallbackTarget(target);
@@ -723,11 +734,8 @@ namespace Photon.Pun
                 if (view.OwnerActorNr == playerId)
                 {
                     var previousOwner = view.Owner;
-
-                    var newOwnerId = view.CreatorActorNr;
-                    var newOwner = CurrentRoom.GetPlayer(newOwnerId);
-
-                    view.SetOwnerInternal(newOwner, newOwnerId);
+                    view.OwnerActorNr = view.CreatorActorNr;
+                    view.ControllerActorNr = view.CreatorActorNr;
 
                     // This callback was not originally here. Added with the IsMine caching changes.
                     if (PhotonNetwork.OnOwnershipTransferedEv != null)
@@ -792,6 +800,7 @@ namespace Photon.Pun
                 if (!viewZero.IsMine)
                 {
                     Debug.LogError("Failed to 'network-remove' GameObject. Client is neither owner nor MasterClient taking over for owner who left: " + viewZero);
+                    foundPVs.Clear();   // as foundPVs is re-used, clean it to avoid lingering references
                     return;
                 }
             }
@@ -843,11 +852,13 @@ namespace Photon.Pun
             {
                 Debug.Log("Network destroy Instantiated GO: " + go.name);
             }
+            
+            foundPVs.Clear();           // as foundPVs is re-used, clean it to avoid lingering references
 
-            go.SetActive(false);            // PUN 2 disables objects before the return to the pool
-
+            go.SetActive(false);        // PUN 2 disables objects before the return to the pool
             prefabPool.Destroy(go);     // PUN 2 always uses a PrefabPool (even for the default implementation)
         }
+
 
         private static readonly ExitGames.Client.Photon.Hashtable removeFilter = new ExitGames.Client.Photon.Hashtable();
         private static readonly ExitGames.Client.Photon.Hashtable ServerCleanDestroyEvent = new ExitGames.Client.Photon.Hashtable();
@@ -2317,21 +2328,23 @@ namespace Photon.Pun
                                 {
                                     // a takeover is successful automatically, if taken from current owner
                                     Player prevOwner = requestedView.Owner;
-                                    Player newOwner = CurrentRoom.GetPlayer(actorNr);
 
-                                    requestedView.SetOwnerInternal(newOwner, actorNr);
+                                    requestedView.OwnerActorNr = actorNr;
+                                    requestedView.ControllerActorNr = actorNr;
 
                                     if (PhotonNetwork.OnOwnershipTransferedEv != null)
                                     {
                                         PhotonNetwork.OnOwnershipTransferedEv(requestedView, prevOwner);
                                     }
-
-                                    // JF IPunOwnershipCallbacks callback handling refactoring
-                                    //requestedView.OnOwnershipTransfered(requestedView, previousOwner);
                                 }
                                 else
                                 {
-                                    Debug.LogWarning("requestedView.OwnershipTransfer was ignored! ");
+
+                                    if (PhotonNetwork.OnOwnershipTransferFailedEv != null)
+                                    {
+                                        PhotonNetwork.OnOwnershipTransferFailedEv(requestedView, originatingPlayer);
+                                    }
+                                    //Debug.LogWarning("requestedView.OwnershipTransfer was ignored! ");
                                 }
                                 break;
 
@@ -2340,13 +2353,6 @@ namespace Photon.Pun
                                 {
                                     PhotonNetwork.OnOwnershipRequestEv(requestedView, originatingPlayer);
                                 }
-                                // JF IPunOwnershipCallbacks callback handling refactoring
-                                //if (requestedView.IsMine)
-                                //{
-                                //    // a request goes to the controller of a PV. the master client might control a view if the actual owner is inactive! this is covered by PV.IsMine
-                                //    requestedView.OnOwnershipRequest(requestedView, originatingPlayer);
-
-                                //}
                                 break;
 
                             default:
@@ -2375,9 +2381,9 @@ namespace Photon.Pun
                                 (requestedView.OwnershipTransfer == OwnershipOption.Request && (originatingPlayer == requestedView.Controller || originatingPlayer == requestedView.Owner)))
                             {
                                 Player prevOwner = requestedView.Owner;
-                                Player newOwner = CurrentRoom.GetPlayer(newOwnerId);
 
-                                requestedView.SetOwnerInternal(newOwner, newOwnerId);
+                                requestedView.OwnerActorNr= newOwnerId;
+                                requestedView.ControllerActorNr = newOwnerId;
 
                                 if (PhotonNetwork.OnOwnershipTransferedEv != null)
                                 {
@@ -2418,9 +2424,10 @@ namespace Photon.Pun
 
                             PhotonView view = GetPhotonView(viewId);
                             Player prevOwner = view.Owner;
-                            Player newOwner = CurrentRoom.GetPlayer(newOwnerId);
+                            Player newOwner = CurrentRoom.GetPlayer(newOwnerId, true);
 
-                            view.SetOwnerInternal(newOwner, newOwnerId);
+                            view.OwnerActorNr= newOwnerId;
+                            view.ControllerActorNr = newOwnerId;
 
                             reusablePVHashset.Add(view);
                             // If this produces an owner change locally, fire the OnOwnershipTransfered callbacks

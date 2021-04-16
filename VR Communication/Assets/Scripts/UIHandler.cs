@@ -1,5 +1,6 @@
 ﻿using HTC.UnityPlugin.Vive;
 using Photon.Pun;
+using Photon.Voice.Unity;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,7 @@ public class UIHandler : MonoBehaviour
     private GameObject NetworkManager;
     private NetworkManager networkManagerScript;
     public GameObject PresentationButtons;
+    public Text micStatusText;
 
     // Start is called before the first frame update
     void Start()
@@ -29,8 +31,10 @@ public class UIHandler : MonoBehaviour
         ActualRoom = GameObject.Find("ActualRoomText");
         ButtonConnect = GameObject.Find("Connect2ServerButton");
         ServerStatus = GameObject.Find("DisconnectedText");
-        GameObject.Find("ServerInput").GetComponent<InputField>().text = "192.168.1.12";
+        GameObject.Find("ServerInput").GetComponent<InputField>().text = "192.168.1.12"; 
+            //"192.168.1.12";
         GameObject.Find("RoomInput").GetComponent<InputField>().text = "1";
+        micStatusText = GameObject.Find("MicStatusButtonText").GetComponent<Text>();
         PlayerUI.SetActive(false);
         target = playerCamera.transform;
     }
@@ -123,6 +127,47 @@ public class UIHandler : MonoBehaviour
     public void errorStatus(string message)
     {
         GameObject.Find("ErrorStatusText").GetComponent<Text>().text = message;
+    }
+
+
+    public void enableDisableMic()
+    {
+
+        bool isDone;
+        if (PhotonNetwork.IsConnectedAndReady && PhotonNetwork.InRoom)
+        {
+            GameObject Player = GameObject.FindGameObjectWithTag("isMine");
+            NetworkVoiceManager VoiceScript = Player.GetComponent<NetworkVoiceManager>();
+            
+            if (micStatusText.text == "ON")
+            {
+                isDone = VoiceScript.changeTransmitStatus(false);
+                if(isDone == true)
+                {
+                    micStatusText.text = "OFF";
+                }
+                else
+                {
+                    errorStatus("Error disabling mic status");
+                }
+            }
+            else
+            {
+                isDone = VoiceScript.changeTransmitStatus(true);
+                if (isDone == true)
+                {
+                    micStatusText.text = "ON";
+                }
+                else
+                {
+                    errorStatus("Error enabling mic status");
+                }
+            }
+        }
+        else
+        {
+            errorStatus("You need to be connected and in a room");
+        }
     }
 
     // Update is called once per frame

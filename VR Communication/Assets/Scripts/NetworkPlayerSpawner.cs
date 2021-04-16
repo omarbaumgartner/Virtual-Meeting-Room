@@ -15,6 +15,11 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
         Scene m_Scene = SceneManager.GetActiveScene();
         Debug.Log("Spawning Player prefab in scene : " + m_Scene.name);
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
+        PhotonView view = spawnedPlayerPrefab.GetComponent<PhotonView>();
+        if (view.IsMine)
+        {
+            spawnedPlayerPrefab.tag = "isMine";
+        }
     }
 
     // Leaving the room

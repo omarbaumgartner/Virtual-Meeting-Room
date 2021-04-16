@@ -470,6 +470,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1650265576807356394, guid: efcbfae965bf02c41a56a8a94c6e95af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650265576807356394, guid: efcbfae965bf02c41a56a8a94c6e95af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650265576807356394, guid: efcbfae965bf02c41a56a8a94c6e95af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1918813031}
+    - target: {fileID: 1650265576807356394, guid: efcbfae965bf02c41a56a8a94c6e95af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650265576807356394, guid: efcbfae965bf02c41a56a8a94c6e95af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: enableDisableMic
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650265576807356394, guid: efcbfae965bf02c41a56a8a94c6e95af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 2952779703670601583, guid: efcbfae965bf02c41a56a8a94c6e95af,
         type: 3}
       propertyPath: m_Enabled
@@ -639,6 +669,18 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &1918813031 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3314545487600500487, guid: efcbfae965bf02c41a56a8a94c6e95af,
+    type: 3}
+  m_PrefabInstance: {fileID: 1366158630}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d073c3634606b04c9dc4939c9b9d121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2009741206
 GameObject:
   m_ObjectHideFlags: 0
@@ -742,6 +784,11 @@ PrefabInstance:
         type: 3}
       propertyPath: viewIdField
       value: 44
+      objectReference: {fileID: 0}
+    - target: {fileID: 1836285833375865518, guid: 981b8fe36277db44aa5ae7880bc49fe3,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 1836285833375865518, guid: 981b8fe36277db44aa5ae7880bc49fe3,
         type: 3}
