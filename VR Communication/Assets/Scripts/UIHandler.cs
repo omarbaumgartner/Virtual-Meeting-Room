@@ -20,6 +20,10 @@ public class UIHandler : MonoBehaviour
     public GameObject PresentationButtons;
     public Text micStatusText;
     public GameObject KeyBoard;
+    // Temps avant de pouvoir fermer ou ouvrir l'interface ( en fps )
+    public int availableDelay;
+    public int openDelay = 50;
+
 
     // Start is called before the first frame update
     void Start()
@@ -37,15 +41,13 @@ public class UIHandler : MonoBehaviour
         GameObject.Find("RoomInput").GetComponent<InputField>().text = "1";
         micStatusText = GameObject.Find("MicStatusButtonText").GetComponent<Text>();
         PlayerUI.SetActive(false);
+        KeyBoard.SetActive(false);
         target = playerCamera.transform;
     }
 
     // Mise à jour des données affichés sur l'interface du joueur lors de son affichage
     public void HasOpenedInterface()
     {
-        
-
-
         if (PhotonNetwork.IsConnectedAndReady)
         {
             Button ButtonConnectText = ButtonConnect.GetComponent<Button>();
@@ -185,26 +187,31 @@ public class UIHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Afficher/Cacher l'interface en appuyant sur le bouton menu
+        if (availableDelay > 0)
+        {
+            availableDelay -= 1;
+        }
+        // Afficher/Cacher l'interface en appuyant sur le bouton menu de la manette droite
         if (ViveInput.GetPress(HandRole.RightHand, ControllerButton.Menu))
         {
-            if (PlayerUI.activeSelf)
+            if (PlayerUI.activeSelf && availableDelay == 0)
             {
+                availableDelay = openDelay;
                 KeyBoard.SetActive(false);
                 PlayerUI.SetActive(false);
             }
-            else
+            else if(!PlayerUI.activeSelf && availableDelay == 0)
             {
+                availableDelay = openDelay;
                 PlayerUI.SetActive(true);
                 KeyBoard.SetActive(true);
-                KeyBoard.transform.eulerAngles = new Vector3(0, playerCamera.transform.eulerAngles.y, playerCamera.transform.eulerAngles.z);
-                Vector3 resultingPosition = playerCamera.transform.position + playerCamera.transform.forward * 2;
-                KeyBoard.transform.position = new Vector3(resultingPosition.x, KeyBoard.transform.position.y, resultingPosition.z);
+                //KeyBoard.transform.eulerAngles = new Vector3(0, playerCamera.transform.eulerAngles.y, playerCamera.transform.eulerAngles.z);
+                //Vector3 resultingPosition = playerCamera.transform.position + playerCamera.transform.forward * 2;
+                //KeyBoard.transform.position = new Vector3(resultingPosition.x, KeyBoard.transform.position.y, resultingPosition.z);
                 KeyBoard.transform.position = Vector3.SmoothDamp(KeyBoard.transform.position, KeyBoard.transform.position, ref velocity, smoothTime);
                 HasOpenedInterface();
             }
         }
-
         // Mouvement de l'interface par rapport à la caméra
         transform.position = Vector3.SmoothDamp(transform.position, transform.position, ref velocity, smoothTime);
     }

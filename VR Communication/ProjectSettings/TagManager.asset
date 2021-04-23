@@ -8,6 +8,8 @@ TagManager:
   - playerTextOutput
   - beforeUsername
   - afterUsername
+  - PresentationButtons
+  - PlayerUI
   layers:
   - Default
   - TransparentFX
