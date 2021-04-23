@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class KeepAliveObject : MonoBehaviour
 {
+    public string username;
     private static KeepAliveObject playerInstance;
     // Start is called before the first frame update
     void Start()

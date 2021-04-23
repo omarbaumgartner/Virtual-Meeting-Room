@@ -19,6 +19,10 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
         if (view.IsMine)
         {
             spawnedPlayerPrefab.tag = "isMine";
+
+            // Pour que la texture de l'avatar n'empêche pas la vision du joueur
+            spawnedPlayerPrefab.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+            
         }
     }
 

@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - isMine
+  - playerTextOutput
+  - beforeUsername
+  - afterUsername
   layers:
   - Default
   - TransparentFX

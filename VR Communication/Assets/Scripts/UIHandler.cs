@@ -19,11 +19,12 @@ public class UIHandler : MonoBehaviour
     private NetworkManager networkManagerScript;
     public GameObject PresentationButtons;
     public Text micStatusText;
+    public GameObject KeyBoard;
 
     // Start is called before the first frame update
     void Start()
     {
-        PresentationButtons = GameObject.Find("PresentationButtons");
+        PresentationButtons = GameObject.FindGameObjectWithTag("PresentationButtons");
         PresentationButtons.SetActive(false);
         NetworkManager = GameObject.Find("Network Manager");
         networkManagerScript = NetworkManager.GetComponent<NetworkManager>();
@@ -42,6 +43,9 @@ public class UIHandler : MonoBehaviour
     // Mise à jour des données affichés sur l'interface du joueur lors de son affichage
     public void HasOpenedInterface()
     {
+        
+
+
         if (PhotonNetwork.IsConnectedAndReady)
         {
             Button ButtonConnectText = ButtonConnect.GetComponent<Button>();
@@ -130,6 +134,14 @@ public class UIHandler : MonoBehaviour
     }
 
 
+    public void confirmUsername()
+    {
+        GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username = "Omar";
+        //GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username = GameObject.Find("InputUsernameText").GetComponent<Text>().text;
+        GameObject.FindGameObjectWithTag("beforeUsername").SetActive(false);
+        GameObject.FindGameObjectWithTag("afterUsername").SetActive(true);
+    }
+
     public void enableDisableMic()
     {
 
@@ -178,11 +190,17 @@ public class UIHandler : MonoBehaviour
         {
             if (PlayerUI.activeSelf)
             {
+                KeyBoard.SetActive(false);
                 PlayerUI.SetActive(false);
             }
             else
             {
                 PlayerUI.SetActive(true);
+                KeyBoard.SetActive(true);
+                KeyBoard.transform.eulerAngles = new Vector3(0, playerCamera.transform.eulerAngles.y, playerCamera.transform.eulerAngles.z);
+                Vector3 resultingPosition = playerCamera.transform.position + playerCamera.transform.forward * 2;
+                KeyBoard.transform.position = new Vector3(resultingPosition.x, KeyBoard.transform.position.y, resultingPosition.z);
+                KeyBoard.transform.position = Vector3.SmoothDamp(KeyBoard.transform.position, KeyBoard.transform.position, ref velocity, smoothTime);
                 HasOpenedInterface();
             }
         }

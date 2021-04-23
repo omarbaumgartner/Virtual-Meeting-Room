@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Photon.Pun;
+using TMPro;
 
 public class NetworkPlayerViewer : MonoBehaviour
 {
@@ -7,11 +8,16 @@ public class NetworkPlayerViewer : MonoBehaviour
     public Transform leftHand;
     public Transform rightHand;
     private PhotonView photonView;
+    [SerializeField] GameObject nickNameTextMP;
 
     // Start is called before the first frame update
     void Start()
     {
         photonView = GetComponent<PhotonView>();
+        // Attribution du username
+        photonView.Owner.NickName = "Omar";
+        //photonView.Owner.NickName = GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username;
+        nickNameTextMP.GetComponent<TextMeshPro>().text = photonView.Owner.NickName;
     }
 
     // Update is called once per frame
