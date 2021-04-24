@@ -11,31 +11,31 @@ public class KeyScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        yOriginalPosition = transform.position.y;
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (keyHit)
+        if (keyHit && keyCanBeHitAgain)
         {
+            yOriginalPosition = transform.position.y;
             keyCanBeHitAgain = false;
             keyHit = false;
             transform.position += new Vector3(0, -0.03f, 0);
         }
 
         // La touche remonte
-        if(transform.position.y < yOriginalPosition)
+        if (transform.position.y < yOriginalPosition)
         {
-            transform.position += new Vector3(0, 0.001f, 0);
+            transform.position += new Vector3(0, 0.005f, 0);
         }
         // Quand la touche sera entiérement remontée, on pourra retaper sur la touche
         else
         {
             keyCanBeHitAgain = true;
         }
-        
+
     }
     private void OnTriggerEnter(Collider other)
     {

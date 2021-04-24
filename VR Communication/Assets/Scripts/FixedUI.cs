@@ -1,6 +1,7 @@
 ﻿using HTC.UnityPlugin.Vive;
 using Photon.Pun;
 using Photon.Voice.Unity;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,14 +19,37 @@ public class FixedUI : MonoBehaviour
     public GameObject PlayerCamera;
     public float distanceFromCamera;
     public float heightFromCamera;
+
+    private GameObject vivePointers;
+    private GameObject[] drumSticks;
+    private GameObject RightHand;
+    private GameObject LeftHand;
+
+    private GameObject usernameInterface;
+    private GameObject mainInterface;
+
     // Temps avant de pouvoir fermer ou ouvrir l'interface ( en fps )
     private int availableDelay;
-    public int openDelay = 50;
+    public int openDelay = 30;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        vivePointers = GameObject.FindGameObjectWithTag("VivePointers");
+        drumSticks = GameObject.FindGameObjectsWithTag("DrumStick");
+        RightHand = GameObject.FindGameObjectWithTag("RightHand");
+        LeftHand = GameObject.FindGameObjectWithTag("LeftHand");
+
+
+        foreach (GameObject drumStick in drumSticks)
+        {
+            drumStick.SetActive(false);
+        }
+
+        usernameInterface = GameObject.Find("usernameInterface");
+        mainInterface = GameObject.Find("mainInterface");
+
         PresentationButtons = GameObject.FindGameObjectWithTag("PresentationButtons");
         PresentationButtons.SetActive(false);
         NetworkManager = GameObject.Find("Network Manager");
@@ -40,37 +64,45 @@ public class FixedUI : MonoBehaviour
         // On rend l'interface invisible
         PlayerUI.SetActive(false);
         KeyBoard.SetActive(false);
+
+        mainInterface.SetActive(false);
+
     }
 
-    // Mise à jour des données affichés sur l'interface du joueur lors de son affichage
+    // Mise à jour des données affichées sur l'interface du joueur lors de son affichage
     public void HasOpenedInterface()
     {
-        if (PhotonNetwork.IsConnectedAndReady)
+        // Si l'interface affiché est l'interface principale ( donc après avoir donné un username )
+        if (mainInterface.activeSelf)
         {
-            Button ButtonConnectText = ButtonConnect.GetComponent<Button>();
-            ButtonConnectText.GetComponentInChildren<Text>().text = "Disconnect";
-            Text serverStatusText = ServerStatus.GetComponent<Text>();
-            serverStatusText.color = Color.green;
-            serverStatusText.text = "Connected";
-            if (PhotonNetwork.InRoom)
+            if (PhotonNetwork.IsConnectedAndReady)
             {
-                ActualRoom.GetComponent<Text>().text = PhotonNetwork.CurrentRoom.Name;
-                GameObject.Find("JoinRoomText").GetComponent<Text>().text = "Leave Room";
+                Button ButtonConnectText = ButtonConnect.GetComponent<Button>();
+                ButtonConnectText.GetComponentInChildren<Text>().text = "Disconnect";
+                Text serverStatusText = ServerStatus.GetComponent<Text>();
+                serverStatusText.color = Color.green;
+                serverStatusText.text = "Connected";
+                if (PhotonNetwork.InRoom)
+                {
+                    ActualRoom.GetComponent<Text>().text = PhotonNetwork.CurrentRoom.Name;
+                    GameObject.Find("JoinRoomText").GetComponent<Text>().text = "Leave Room";
+                }
+                else
+                {
+                    ActualRoom.GetComponent<Text>().text = "Lobby";
+                }
             }
             else
             {
+                Button ButtonConnectText = ButtonConnect.GetComponent<Button>();
+                ButtonConnectText.GetComponentInChildren<Text>().text = "Connect";
+                Text serverStatusText = ServerStatus.GetComponent<Text>();
+                serverStatusText.color = Color.red;
+                serverStatusText.text = "Disconnected";
                 ActualRoom.GetComponent<Text>().text = "Lobby";
             }
         }
-        else
-        {
-            Button ButtonConnectText = ButtonConnect.GetComponent<Button>();
-            ButtonConnectText.GetComponentInChildren<Text>().text = "Connect";
-            Text serverStatusText = ServerStatus.GetComponent<Text>();
-            serverStatusText.color = Color.red;
-            serverStatusText.text = "Disconnected";
-            ActualRoom.GetComponent<Text>().text = "Lobby";
-        }
+        
     }
 
     // Clavier pour insérer l'adresse IP du serveur
@@ -135,10 +167,9 @@ public class FixedUI : MonoBehaviour
 
     public void confirmUsername()
     {
-        GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username = "Omar";
-        //GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username = GameObject.Find("InputUsernameText").GetComponent<Text>().text;
-        GameObject.FindGameObjectWithTag("beforeUsername").SetActive(false);
-        GameObject.FindGameObjectWithTag("afterUsername").SetActive(true);
+        GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username = GameObject.Find("InputUsernameText").GetComponent<Text>().text;
+        usernameInterface.SetActive(false);
+        mainInterface.SetActive(true);
     }
 
     public void enableDisableMic()
@@ -201,19 +232,41 @@ public class FixedUI : MonoBehaviour
             else if (!KeyBoard.activeSelf && availableDelay == 0)
             {
 
+                // Pour que l'interface soit toujours en fance de la caméra
                 transform.eulerAngles = new Vector3(0, PlayerCamera.transform.eulerAngles.y, 0);
-                Vector3 playerDirection = PlayerCamera.transform.forward;
 
                 Vector3 resultingPosition = PlayerCamera.transform.position + PlayerCamera.transform.forward * distanceFromCamera;
-                
-                transform.position = new Vector3(resultingPosition.x, transform.position.y, resultingPosition.z)+ new Vector3(0, -heightFromCamera, 0);
+                transform.position = new Vector3(resultingPosition.x, transform.position.y, resultingPosition.z);
 
-                //transform.position = Vector3.MoveTowards(transform.position, PlayerCamera.transform.position, 1f);
                 availableDelay = openDelay;
                 PlayerUI.SetActive(true);
+                KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
                 KeyBoard.SetActive(true);
                 HasOpenedInterface();
             }
+        }
+
+        // Switcher entre le mode pointeur pour appuyer sur les bouttons et le mode drumstick pour pouvoir écrire
+        if (ViveInput.GetPress(HandRole.LeftHand, ControllerButton.Menu))
+        {
+            if (vivePointers.activeSelf == true)
+            {
+                vivePointers.SetActive(false);
+                foreach (GameObject drumStick in drumSticks)
+                {
+                    //Debug.Log("Setting drumstick to active");
+                    drumStick.SetActive(true);
+                }
+            }
+            else
+            {
+                vivePointers.SetActive(true);
+                foreach (GameObject drumStick in drumSticks)
+                {
+                    drumStick.SetActive(false);
+                }
+            }
+
         }
     }
 }

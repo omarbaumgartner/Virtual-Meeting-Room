@@ -10,6 +10,8 @@ TagManager:
   - afterUsername
   - PresentationButtons
   - PlayerUI
+  - VivePointers
+  - DrumStick
   layers:
   - Default
   - TransparentFX

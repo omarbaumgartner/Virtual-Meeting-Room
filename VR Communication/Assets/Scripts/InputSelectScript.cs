@@ -5,22 +5,30 @@ using UnityEngine.UI;
 
 public class InputSelectScript : MonoBehaviour
 {
+
+    private GameObject childText;
     // Start is called before the first frame update
     void Start()
     {
-        
+        childText = gameObject.transform.GetChild(gameObject.transform.childCount - 1).gameObject;
+
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        /*if(gameObject.GetComponent<InputField>().isFocused == true)
+        if (gameObject.activeSelf)
         {
-            gameObject.tag = "playerTextOutput";
+            InputField input = gameObject.GetComponent<InputField>();
+            if (input.isFocused == true)
+            {
+                gameObject.tag = "playerTextOutput";
+            }
+            else
+            {
+                gameObject.tag = "Untagged";
+            }
         }
-        else
-        {
-            gameObject.tag = "Untagged";
-        }*/
     }
 }
