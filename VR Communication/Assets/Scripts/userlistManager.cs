@@ -68,6 +68,8 @@ public class userlistManager : MonoBehaviour
                 {
                     Debug.Log("Giving rights to user confirmed");
                     PhotonNetwork.SetMasterClient(player.Value);
+                    PhotonView photonView;
+                    photonView.RPC("OnMasterChanged", RpcTarget.All);
 
                 }
             }
