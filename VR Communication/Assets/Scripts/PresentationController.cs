@@ -23,8 +23,8 @@ public class PresentationController : MonoBehaviour
         Debug.Log("Board is mine : "+photonView.IsMine);
         if (photonView.IsMine)
         {
-            GameObject FixedUI = GameObject.Find("FixedUI");
-            FixedUI.GetComponent<UIHandler>().PresentationButtons.SetActive(true);
+            FixedUI FixedUIScript = GameObject.FindGameObjectWithTag("FixedUI").GetComponent<FixedUI>();
+            FixedUIScript.PresentationButtons.SetActive(true);
             Button refreshButton = GameObject.Find("refreshSlideButton").GetComponent<Button>();
             refreshButton.onClick.AddListener(refresh);
             Button nextButton = GameObject.Find("nextSlideButton").GetComponent<Button>();

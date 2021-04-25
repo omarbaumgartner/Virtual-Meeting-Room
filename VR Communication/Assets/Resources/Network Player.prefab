@@ -766,7 +766,7 @@ MonoBehaviour:
   unityMicrophoneDevice: Microphone Array (Realtek(R) Audio)
   photonMicrophoneDeviceId: 0
   interestGroup: 0
-  debugEchoMode: 1
+  debugEchoMode: 0
   reliableMode: 0
   encrypt: 0
   transmitEnabled: 0

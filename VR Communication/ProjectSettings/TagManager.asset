@@ -12,6 +12,9 @@ TagManager:
   - PlayerUI
   - VivePointers
   - DrumStick
+  - RightHand
+  - LeftHand
+  - FixedUI
   layers:
   - Default
   - TransparentFX

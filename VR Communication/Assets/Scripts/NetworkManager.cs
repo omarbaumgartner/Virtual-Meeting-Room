@@ -3,37 +3,51 @@
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System;
 
 public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quand il y'a connexion/deconnexion...
 {
     private GameObject Interface;
-    private UIHandler InterfaceScript;
+    private FixedUI InterfaceScript;
+    private userlistManager usersPannelScript;
+    private KeepAliveObject keepAliveScript;
+    private GameObject PresentationButtonsGO;
+
 
     // Start is called before the first frame update
     void Start()
     {
         Interface = GameObject.Find("FixedUI");
-        InterfaceScript = Interface.GetComponent<UIHandler>();
-        //ActualRoom = GameObject.Find("ActualRoomText");
+        InterfaceScript = Interface.GetComponent<FixedUI>();
+        usersPannelScript = GameObject.Find("usersPannel").GetComponent<userlistManager>();
+        keepAliveScript = GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>();
+
         PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     // Server connection
     public void connectToServer()
     {
-        Text ButtonConnectText = GameObject.Find("ConnectText").GetComponent<Text>();
-        if (ButtonConnectText.text == "Connect")
+        if (InterfaceScript.ButtonConnectText.text == "Connect")
         {
-            InputField InputServer = GameObject.Find("ServerInput").GetComponent<InputField>();
-            PhotonNetwork.PhotonServerSettings.AppSettings.Server = InputServer.text;
             Debug.Log("Connecting to " + PhotonNetwork.PhotonServerSettings.AppSettings.Server);
             PhotonNetwork.NetworkingClient.LoadBalancingPeer.SerializationProtocolType = ExitGames.Client.Photon.SerializationProtocol.GpBinaryV16;
             PhotonNetwork.PhotonServerSettings.AppSettings.UseNameServer = false;
-            PhotonNetwork.PhotonServerSettings.AppSettings.Server = "192.168.1.12";
+            PhotonNetwork.PhotonServerSettings.AppSettings.Server = InterfaceScript.ServerInput.text;
             PhotonNetwork.PhotonServerSettings.AppSettings.Port = 5055;
             PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = null;
+            
+            // Attribution du username et génération+attribution manuelle d'un ID unique
+            PhotonNetwork.LocalPlayer.NickName = keepAliveScript.username;
+            Guid uniqueId = Guid.NewGuid();
+            AuthenticationValues authValues = new AuthenticationValues();
+            authValues.AuthType = CustomAuthenticationType.Custom;
+            authValues.UserId = uniqueId.ToString();            
+            PhotonNetwork.AuthValues = authValues;
+
+            // Connexion
             PhotonNetwork.ConnectUsingSettings();
-            //ConnectUsingSettings();
         }
         else
         {
@@ -47,8 +61,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         if (PhotonNetwork.IsConnectedAndReady)
         {
             {
-                string roomNumber = "1";
-                //string roomNumber = GameObject.Find("RoomInputText").GetComponent<Text>().text;
+                string roomNumber = InterfaceScript.RoomInput.text;
                 if (roomNumber == "")
                 {
                     InterfaceScript.errorStatus("A room name is required");
@@ -61,6 +74,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
                     roomOptions.MaxPlayers = 10;
                     roomOptions.IsVisible = true;
                     roomOptions.IsOpen = true;
+                    roomOptions.PublishUserId = true;
                     //PhotonNetwork.LoadLevel(1);
                     PhotonNetwork.JoinOrCreateRoom("1", roomOptions, TypedLobby.Default);
                     //PhotonNetwork.JoinOrCreateRoom(roomNumber, roomOptions, TypedLobby.Default);
@@ -80,7 +94,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         {
             if (!PhotonNetwork.InRoom)
             {
-                string roomNumber = GameObject.Find("RoomInputText").GetComponent<Text>().text;
+                string roomNumber = InterfaceScript.RoomInput.text;
                 if (roomNumber == "")
                 {
                     InterfaceScript.errorStatus("A room number is required");
@@ -88,11 +102,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
                 else
                 {
                     InterfaceScript.errorStatus("");
-                    Debug.Log("Creating/Joining Room");
                     RoomOptions roomOptions = new RoomOptions();
                     roomOptions.MaxPlayers = 10;
                     roomOptions.IsVisible = true;
                     roomOptions.IsOpen = true;
+                    roomOptions.PublishUserId = true;
                     PhotonNetwork.JoinOrCreateRoom(roomNumber,roomOptions,TypedLobby.Default);
                 }
             }
@@ -135,19 +149,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     public override void OnConnected()
     {
         Debug.Log("Connected to Server");
-        GameObject serverStatus = GameObject.Find("DisconnectedText");
-        if (serverStatus)
+        if (InterfaceScript.ServerStatus)
         {
-            Text serverStatusText = serverStatus.GetComponent<Text>();
-            serverStatusText.color = Color.green;
-            serverStatusText.text = "Connected";
+            InterfaceScript.ServerStatus.GetComponent<Text>().color = Color.green;
+            InterfaceScript.ServerStatus.GetComponent<Text>().text = "Connected";
         }
 
-        GameObject ButtonConnect = GameObject.Find("ConnectText");
-        if (ButtonConnect)
+        if (InterfaceScript.ButtonConnect)
         {
-            Text ButtonConnectText = ButtonConnect.GetComponent<Text>();
-            ButtonConnectText.text = "Disconnect";
+            InterfaceScript.ButtonConnectText.text = "Disconnect";
         }
         base.OnConnected();
     }
@@ -156,11 +166,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     public override void OnDisconnected(DisconnectCause cause)
     {
         Debug.Log("Disconnected from Server");
-        Text serverStatus = GameObject.Find("DisconnectedText").GetComponent<Text>();
-        serverStatus.color = Color.red;
-        serverStatus.text = "Disconnected";
-        Text ButtonConnectText = GameObject.Find("ConnectText").GetComponent<Text>();
-        ButtonConnectText.text = "Connect";
+        InterfaceScript.serverStatusText.color = Color.red;
+        InterfaceScript.serverStatusText.text = "Disconnected";
+        InterfaceScript.ButtonConnectText.text = "Connect";
         Debug.Log(cause);
         base.OnDisconnected(cause);
     }
@@ -168,11 +176,32 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     // Déclencheur lorsqu'on rejoint une salle
     public override void OnJoinedRoom()
     {
+        // Initialiser la liste des utilisateurs déjà présents
         base.OnJoinedRoom();
-        //PhotonNetwork.LoadLevel(1);
-        GameObject.Find("CreateJoinRoomText").GetComponent<Text>().text = "Leave Room";
+        Dictionary<int, Player> players = PhotonNetwork.CurrentRoom.Players;
+        usersPannelScript.initList(players);
+        InterfaceScript.RoomActionText.text = "Leave";
+        InterfaceScript.ActualRoom.GetComponent<Text>().text = PhotonNetwork.CurrentRoom.Name;
+
+        Debug.Log("Number of players in room : " + PhotonNetwork.CurrentRoom.Players.Count);
         Debug.Log("Joined room : " + PhotonNetwork.CurrentRoom.Name);
-        GameObject.Find("ActualRoomText").GetComponent<Text>().text = PhotonNetwork.CurrentRoom.Name;
+
+        //PhotonNetwork.LoadLevel(1);
+
+    }
+
+    // Déclencheur lorsqu'on quitte une salle
+    public override void OnLeftRoom()
+    {
+        base.OnLeftRoom();
+        InterfaceScript.RoomActionText.text = "Join";
+        InterfaceScript.ActualRoom.GetComponent<Text>().text = "Lobby";
+        usersPannelScript.clearList();
+        if (InterfaceScript.PresentationButtons != null)
+        {
+            InterfaceScript.PresentationButtons.SetActive(false);
+        }
+        //PhotonNetwork.LoadLevel(0);
     }
 
     // Déclencheur lorsqu'on créé une salle
@@ -182,30 +211,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         base.OnCreatedRoom();
         diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", transform.position, transform.rotation);
         diapoPrefab.name = "DiapoBoard";
-        /*if (diapoPrefab.GetComponent<PhotonView>().IsMine)
-        {
-            GameObject PresentationButtons = GameObject.Find("PresentationButtons");
-            PresentationButtons.SetActive(true);
-        }*/
         Debug.Log("Room created and Board inited");
     }
 
-    // Déclencheur lorsqu'on quitte une salle
-    public override void OnLeftRoom()
-    {
 
-        GameObject.Find("CreateJoinRoomText").GetComponent<Text>().text = "Create/Join Room";
-        GameObject.Find("ActualRoomText").GetComponent<Text>().text = "Lobby";
-        base.OnLeftRoom();
-        if(GameObject.Find("PresentationButtons") != null)
-        {
-            GameObject.Find("PresentationButtons").SetActive(false);
-        }
-        //PhotonNetwork.LoadLevel(0);
+
+    // If a player joined the room
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        usersPannelScript.addElement(newPlayer.UserId, newPlayer.NickName);
+        base.OnPlayerEnteredRoom(newPlayer);
+        Debug.Log("A new player joined the room");
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+        usersPannelScript.removeElement(otherPlayer.UserId, otherPlayer.NickName);
         if (GameObject.Find("DiapoBoard") == null)
         {
             if (PhotonNetwork.IsMasterClient == true)
@@ -233,10 +254,5 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     }
 
 
-    // If a player joined the room
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        base.OnPlayerEnteredRoom(newPlayer);
-        Debug.Log("A new player joined the room");
-    }
+
 }

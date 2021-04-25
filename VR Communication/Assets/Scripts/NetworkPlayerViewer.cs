@@ -15,8 +15,6 @@ public class NetworkPlayerViewer : MonoBehaviour
     {
         photonView = GetComponent<PhotonView>();
         // Attribution du username
-        photonView.Owner.NickName = "Omar";
-        //photonView.Owner.NickName = GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username;
         nickNameTextMP.GetComponent<TextMeshPro>().text = photonView.Owner.NickName;
     }
 

@@ -7,14 +7,20 @@ using UnityEngine.UI;
 
 public class FixedUI : MonoBehaviour
 {
-    private GameObject PlayerUI;
-    private GameObject ActualRoom;
-    private GameObject ButtonConnect;
-    private GameObject ServerStatus;
-    private GameObject NetworkManager;
-    private NetworkManager networkManagerScript;
-    private GameObject PresentationButtons;
-    private Text micStatusText;
+    public GameObject PlayerUI;
+    public GameObject ActualRoom;
+    public GameObject ButtonConnect;
+    public GameObject ServerStatus;
+    public GameObject NetworkManager;
+    public NetworkManager networkManagerScript;
+    public GameObject PresentationButtons;
+    public InputField ServerInput;
+    public InputField RoomInput;
+    public Text RoomActionText;
+    public Text ButtonConnectText;
+    public Text serverStatusText;
+    public Text micStatusText;
+
     public GameObject KeyBoard;
     public GameObject PlayerCamera;
     public float distanceFromCamera;
@@ -25,8 +31,8 @@ public class FixedUI : MonoBehaviour
     private GameObject RightHand;
     private GameObject LeftHand;
 
-    private GameObject usernameInterface;
-    private GameObject mainInterface;
+    public GameObject usernameInterface;
+    public GameObject mainInterface;
 
     // Temps avant de pouvoir fermer ou ouvrir l'interface ( en fps )
     private int availableDelay;
@@ -36,12 +42,12 @@ public class FixedUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        RoomActionText = GameObject.Find("CreateJoinRoomButton").GetComponent<Button>().GetComponentInChildren<Text>();
         vivePointers = GameObject.FindGameObjectWithTag("VivePointers");
         drumSticks = GameObject.FindGameObjectsWithTag("DrumStick");
         RightHand = GameObject.FindGameObjectWithTag("RightHand");
         LeftHand = GameObject.FindGameObjectWithTag("LeftHand");
-
-
         foreach (GameObject drumStick in drumSticks)
         {
             drumStick.SetActive(false);
@@ -51,21 +57,33 @@ public class FixedUI : MonoBehaviour
         mainInterface = GameObject.Find("mainInterface");
 
         PresentationButtons = GameObject.FindGameObjectWithTag("PresentationButtons");
+        
         PresentationButtons.SetActive(false);
+        
         NetworkManager = GameObject.Find("Network Manager");
         networkManagerScript = NetworkManager.GetComponent<NetworkManager>();
+        
         PlayerUI = GameObject.FindGameObjectWithTag("PlayerUI");
         ActualRoom = GameObject.Find("ActualRoomText");
         ButtonConnect = GameObject.Find("Connect2ServerButton");
         ServerStatus = GameObject.Find("DisconnectedText");
-        GameObject.Find("ServerInput").GetComponent<InputField>().text = "192.168.1.12";
-        GameObject.Find("RoomInput").GetComponent<InputField>().text = "1";
+
+        ButtonConnectText = ButtonConnect.GetComponent<Button>().GetComponentInChildren<Text>();
+        serverStatusText = ServerStatus.GetComponent<Text>();
+
+        ServerInput = GameObject.Find("ServerInput").GetComponent<InputField>();
+        RoomInput = GameObject.Find("RoomInput").GetComponent<InputField>();
         micStatusText = GameObject.Find("MicStatusButtonText").GetComponent<Text>();
-        // On rend l'interface invisible
+        
+        // On rend l'interface principale invisible
         PlayerUI.SetActive(false);
         KeyBoard.SetActive(false);
-
         mainInterface.SetActive(false);
+
+        // Pour le développement
+        ServerInput.text = "192.168.1.12";
+        RoomInput.text = "1";
+
 
     }
 
@@ -77,19 +95,18 @@ public class FixedUI : MonoBehaviour
         {
             if (PhotonNetwork.IsConnectedAndReady)
             {
-                Button ButtonConnectText = ButtonConnect.GetComponent<Button>();
-                ButtonConnectText.GetComponentInChildren<Text>().text = "Disconnect";
-                Text serverStatusText = ServerStatus.GetComponent<Text>();
+                ButtonConnectText.text = "Disconnect";
                 serverStatusText.color = Color.green;
                 serverStatusText.text = "Connected";
                 if (PhotonNetwork.InRoom)
                 {
                     ActualRoom.GetComponent<Text>().text = PhotonNetwork.CurrentRoom.Name;
-                    GameObject.Find("JoinRoomText").GetComponent<Text>().text = "Leave Room";
+                    RoomActionText.text = "Leave";
                 }
                 else
                 {
                     ActualRoom.GetComponent<Text>().text = "Lobby";
+                    RoomActionText.text = "Join";
                 }
             }
             else
