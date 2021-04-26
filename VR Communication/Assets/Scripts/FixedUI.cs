@@ -82,7 +82,7 @@ public class FixedUI : MonoBehaviour
         mainInterface.SetActive(false);
 
         // Pour le développement
-        ServerInput.text = "192.168.1.12";
+        ServerInput.text = "172.30.16.11";
         RoomInput.text = "1";
 
 
@@ -278,6 +278,7 @@ public class FixedUI : MonoBehaviour
                 PlayerUI.SetActive(true);
                 KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
                 KeyBoard.SetActive(true);
+
                 HasOpenedInterface();
             }
         }

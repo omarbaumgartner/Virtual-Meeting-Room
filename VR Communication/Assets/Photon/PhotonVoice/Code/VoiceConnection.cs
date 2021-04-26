@@ -430,8 +430,6 @@ namespace Photon.Voice.Unity
             }
             this.Settings.FixedRegion = null;
             this.Settings.UseNameServer = false;
-            this.Settings.Server = "192.168.1.12";
-            this.Settings.Port = 5055;
             return this.client.ConnectUsingSettings(this.Settings);
         }
 

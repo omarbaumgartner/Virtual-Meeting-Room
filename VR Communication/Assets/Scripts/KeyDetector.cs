@@ -29,7 +29,7 @@ public class KeyDetector : MonoBehaviour
             if (other.gameObject.GetComponent<KeyScript>().keyCanBeHitAgain)
             {
                 // Cherche l'input qui a le tag playerTextOutput ( permet d'avoir plusieurs outputs )
-                
+
                 GameObject TextOuput = GameObject.FindGameObjectWithTag("playerTextOutput");
 
                 if (TextOuput != null)
@@ -42,8 +42,11 @@ public class KeyDetector : MonoBehaviour
                     }
                     else if (key.text == "DEL")
                     {
-                        //Debug.Log("Deleting");
-                        playerTextOutput.text = playerTextOutput.text.Substring(0, playerTextOutput.text.Length - 1);
+                        if (playerTextOutput.text.Length > 0)
+                        {
+                            //Debug.Log("Deleting");
+                            playerTextOutput.text = playerTextOutput.text.Substring(0, playerTextOutput.text.Length - 1);
+                        }
                     }
                     else
                     {

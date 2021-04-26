@@ -31,10 +31,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     {
         if (InterfaceScript.ButtonConnectText.text == "Connect")
         {
-            Debug.Log("Connecting to " + PhotonNetwork.PhotonServerSettings.AppSettings.Server);
             PhotonNetwork.NetworkingClient.LoadBalancingPeer.SerializationProtocolType = ExitGames.Client.Photon.SerializationProtocol.GpBinaryV16;
             PhotonNetwork.PhotonServerSettings.AppSettings.UseNameServer = false;
             PhotonNetwork.PhotonServerSettings.AppSettings.Server = InterfaceScript.ServerInput.text;
+            Debug.Log("Connecting to " + PhotonNetwork.PhotonServerSettings.AppSettings.Server);
             PhotonNetwork.PhotonServerSettings.AppSettings.Port = 5055;
             PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = null;
             
