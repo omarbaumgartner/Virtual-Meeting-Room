@@ -763,10 +763,10 @@ MonoBehaviour:
   voiceDetection: 1
   voiceDetectionThreshold: 0.01
   voiceDetectionDelayMs: 500
-  unityMicrophoneDevice: Microphone Array (Realtek(R) Audio)
+  unityMicrophoneDevice: Microphone (VIVE Pro Mutimedia Audio)
   photonMicrophoneDeviceId: 0
   interestGroup: 0
-  debugEchoMode: 0
+  debugEchoMode: 1
   reliableMode: 0
   encrypt: 0
   transmitEnabled: 0

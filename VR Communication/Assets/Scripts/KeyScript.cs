@@ -17,12 +17,21 @@ public class KeyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (keyHit && keyCanBeHitAgain)
+        if(gameObject.activeSelf && yOriginalPosition == float.NaN)
+        {
+            yOriginalPosition = transform.position.y;
+        }
+        else if(!gameObject.activeSelf)
+        {
+            yOriginalPosition = float.NaN;
+        }
+
+        if (keyHit && keyCanBeHitAgain && yOriginalPosition != float.NaN)
         {
             yOriginalPosition = transform.position.y;
             keyCanBeHitAgain = false;
             keyHit = false;
-            transform.position += new Vector3(0, -0.03f, 0);
+            transform.position = new Vector3(transform.position.x, transform.position.y - 0.03f, transform.position.z);
         }
 
         // La touche remonte

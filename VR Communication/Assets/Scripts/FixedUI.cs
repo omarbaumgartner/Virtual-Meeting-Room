@@ -37,7 +37,8 @@ public class FixedUI : MonoBehaviour
     // Temps avant de pouvoir fermer ou ouvrir l'interface ( en fps )
     private int availableDelay;
     public int openDelay = 30;
-
+    public int switchAvailableDelay;
+    public int switchDelay = 30;
 
     // Start is called before the first frame update
     void Start()
@@ -191,13 +192,11 @@ public class FixedUI : MonoBehaviour
 
     public void enableDisableMic()
     {
-
         bool isDone;
         if (PhotonNetwork.IsConnectedAndReady && PhotonNetwork.InRoom)
         {
             GameObject Player = GameObject.FindGameObjectWithTag("isMine");
             NetworkVoiceManager VoiceScript = Player.GetComponent<NetworkVoiceManager>();
-
             if (micStatusText.text == "ON")
             {
                 isDone = VoiceScript.changeTransmitStatus(false);
@@ -236,36 +235,11 @@ public class FixedUI : MonoBehaviour
         {
             availableDelay -= 1;
         }
-        // Afficher/Cacher l'interface en appuyant sur le bouton menu de la manette droite
-        if (ViveInput.GetPress(HandRole.RightHand, ControllerButton.Menu))
-        {
-            if (KeyBoard.activeSelf && availableDelay == 0)
-            {
-                availableDelay = openDelay;
-                PlayerUI.SetActive(false);
-                KeyBoard.SetActive(false);
-
-            }
-            else if (!KeyBoard.activeSelf && availableDelay == 0)
-            {
-
-                // Pour que l'interface soit toujours en fance de la caméra
-                transform.eulerAngles = new Vector3(0, PlayerCamera.transform.eulerAngles.y, 0);
-
-                Vector3 resultingPosition = PlayerCamera.transform.position + PlayerCamera.transform.forward * distanceFromCamera;
-                transform.position = new Vector3(resultingPosition.x, transform.position.y, resultingPosition.z);
-
-                availableDelay = openDelay;
-                PlayerUI.SetActive(true);
-                KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
-                KeyBoard.SetActive(true);
-                HasOpenedInterface();
-            }
-        }
 
         // Switcher entre le mode pointeur pour appuyer sur les bouttons et le mode drumstick pour pouvoir écrire
-        if (ViveInput.GetPress(HandRole.LeftHand, ControllerButton.Menu))
+        if (ViveInput.GetPress(HandRole.LeftHand, ControllerButton.Menu) && ViveInput.GetPress(HandRole.RightHand, ControllerButton.Menu) && availableDelay == 0)
         {
+            availableDelay = openDelay;
             if (vivePointers.activeSelf == true)
             {
                 vivePointers.SetActive(false);
@@ -283,7 +257,31 @@ public class FixedUI : MonoBehaviour
                     drumStick.SetActive(false);
                 }
             }
-
         }
+
+        // Afficher/Cacher l'interface en appuyant sur le bouton menu de la manette droite
+        if (ViveInput.GetPress(HandRole.RightHand, ControllerButton.Menu) && !ViveInput.GetPress(HandRole.LeftHand, ControllerButton.Menu))
+        {
+            if (KeyBoard.activeSelf && availableDelay == 0)
+            {
+                availableDelay = openDelay;
+                PlayerUI.SetActive(false);
+                KeyBoard.SetActive(false);
+            }
+            else if (!KeyBoard.activeSelf && availableDelay == 0)
+            {
+                // Pour que l'interface soit toujours en fance de la caméra
+                transform.eulerAngles = new Vector3(0, PlayerCamera.transform.eulerAngles.y, 0);
+                Vector3 resultingPosition = PlayerCamera.transform.position + PlayerCamera.transform.forward * distanceFromCamera;
+                transform.position = new Vector3(resultingPosition.x, transform.position.y, resultingPosition.z);
+                availableDelay = openDelay;
+                PlayerUI.SetActive(true);
+                KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
+                KeyBoard.SetActive(true);
+                HasOpenedInterface();
+            }
+        }
+
+        
     }
 }
