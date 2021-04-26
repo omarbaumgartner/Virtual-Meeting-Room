@@ -67,9 +67,10 @@ public class userlistManager : MonoBehaviour
                 if (player.Value.UserId == id && player.Value.NickName == username)
                 {
                     Debug.Log("Giving rights to user confirmed");
-                    PhotonNetwork.SetMasterClient(player.Value);
-                    PhotonView photonView;
-                    photonView.RPC("OnMasterChanged", RpcTarget.All);
+                    // To do passer le lead.
+                    //PhotonNetwork.SetMasterClient(player.Value);
+                    //PhotonView photonView;
+                    //photonView.RPC("OnMasterChanged", RpcTarget.All);
 
                 }
             }
