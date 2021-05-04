@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// Script permettant de synchroniser la position et la rotation des DrumStick avec les manettes.
 public class DrumStickMovement : MonoBehaviour
 {
     [SerializeField] GameObject ToFollow;
@@ -16,9 +18,5 @@ public class DrumStickMovement : MonoBehaviour
     {
         transform.position = ToFollow.transform.position;
         transform.rotation = ToFollow.transform.rotation * Quaternion.Euler(0, 90f, 90f);
-
-        //transform.rotation ;
-
-
     }
 }

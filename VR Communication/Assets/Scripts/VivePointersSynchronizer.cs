@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
 public class VivePointersSynchronizer : MonoBehaviour
-{   // Script permettant de transformer la position des vive pointers vers les positions des manettes Vive.
-
+{   
+    // Synchronisation de la position des Vive pointers par rapport aux manettes Vive.
+    
     [SerializeField]
     private GameObject ViveControllerName;
 
     // Start is called before the first frame update
-    // Synchronisation des pointeurs avec les manettes
     void Start()
     {
             gameObject.transform.position = ViveControllerName.transform.position;

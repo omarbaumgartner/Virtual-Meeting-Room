@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// Script prenant en charge l'animation des touches du clavier
 public class KeyScript : MonoBehaviour
 {
     public bool keyHit = false;

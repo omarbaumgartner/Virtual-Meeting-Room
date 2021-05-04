@@ -2,25 +2,26 @@
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 
+// Script gérant les apparitions des joueurs lorsqu'ils rejoignent une salle
 public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
 {
-
     // Création du joueur lorsqu'il se connecte à une room
     private GameObject spawnedPlayerPrefab;
 
-    // Joining the room
+    
+    // Se déclenche lorsqu'un joueur entre dans une salle
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-        Scene m_Scene = SceneManager.GetActiveScene();
-        Debug.Log("Spawning Player prefab in scene : " + m_Scene.name);
+        // Instantiantion de l'avatar du joueur
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
         PhotonView view = spawnedPlayerPrefab.GetComponent<PhotonView>();
+        // Attribution du tag isMine si le joueur entrant dans la salle est l'utilisateur de l'application
         if (view.IsMine)
         {
             spawnedPlayerPrefab.tag = "isMine";
-
-            // Pour que la texture de l'avatar n'empêche pas la vision du joueur
+            // Pour que la texture de l'avatar ne dérange pas la vision du joueur
+            // Il ne verra pas son avatar mais les autres le verront
             spawnedPlayerPrefab.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
             
         }

@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
+
+// Script permettant de gérer les fonctionnalités de présentation
+// Notamment le défilement des slides et le rafraichissement de la présentation
 public class PresentationController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -20,7 +23,6 @@ public class PresentationController : MonoBehaviour
     void Start()
     {
         photonView = GetComponent<PhotonView>();
-        Debug.Log("Board is mine : "+photonView.IsMine);
         if (photonView.IsMine)
         {
             FixedUI FixedUIScript = GameObject.FindGameObjectWithTag("FixedUI").GetComponent<FixedUI>();
@@ -103,38 +105,12 @@ public class PresentationController : MonoBehaviour
         {
             {
                 loadedTexture = DownloadHandlerTexture.GetContent(www);
-                Debug.Log("Getting texture");
-                Debug.Log("Texture height : " + loadedTexture.height);
                 slideNumber = loadedTexture.height / diapoHeight;
-                Debug.Log("Nombre de slides  : "+ slideNumber);
                 textureImage.sprite = Sprite.Create(loadedTexture, new Rect(0f, 1500f*(slideNumber-1), loadedTexture.width, loadedTexture.height/ slideNumber), Vector2.zero);
                 actualSlide = slideNumber - 1; // Premier slide = n-1 , second slide n-2, ... , 0
             }
         }
     }
-
-
-    private bool CompareTexture(Texture2D first, Texture2D second)
-    {
-        Debug.Log("Comparing textures");
-        Color[] firstPix = first.GetPixels();
-        Color[] secondPix = second.GetPixels();
-        if (firstPix.Length != secondPix.Length)
-        {
-            return false;
-        }
-        for (int i = 0; i < firstPix.Length; i++)
-        {
-            if (firstPix[i] != secondPix[i])
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
 
 }
 

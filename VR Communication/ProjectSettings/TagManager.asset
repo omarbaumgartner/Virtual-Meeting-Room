@@ -15,6 +15,7 @@ TagManager:
   - RightHand
   - LeftHand
   - FixedUI
+  - Lights
   layers:
   - Default
   - TransparentFX

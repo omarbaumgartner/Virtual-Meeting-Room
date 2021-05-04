@@ -5,6 +5,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+// Script permettant de gérer l'interface utilisateur notamment :
+// Le texte affiché ( statut de connexion, de salle ... ) 
+// Inputs pour entrer l'adresse IP, la salle, le username ..
+// La liste des utilisateurs ...
+// + Apparition d'un clavier en face de l'IU
 public class FixedUI : MonoBehaviour
 {
     public GameObject PlayerUI;
@@ -49,34 +55,33 @@ public class FixedUI : MonoBehaviour
         drumSticks = GameObject.FindGameObjectsWithTag("DrumStick");
         RightHand = GameObject.FindGameObjectWithTag("RightHand");
         LeftHand = GameObject.FindGameObjectWithTag("LeftHand");
+        usernameInterface = GameObject.Find("usernameInterface");
+        mainInterface = GameObject.Find("mainInterface");
+        PresentationButtons = GameObject.FindGameObjectWithTag("PresentationButtons");
+        PlayerUI = GameObject.FindGameObjectWithTag("PlayerUI");
+        ActualRoom = GameObject.Find("ActualRoomText");
+        ButtonConnect = GameObject.Find("Connect2ServerButton");
+        ServerStatus = GameObject.Find("DisconnectedText");
+        ServerInput = GameObject.Find("ServerInput").GetComponent<InputField>();
+        RoomInput = GameObject.Find("RoomInput").GetComponent<InputField>();
+        micStatusText = GameObject.Find("MicStatusButtonText").GetComponent<Text>();
+
+        // Désactivation des drumsticks, les pointers sont activés
         foreach (GameObject drumStick in drumSticks)
         {
             drumStick.SetActive(false);
         }
-
-        usernameInterface = GameObject.Find("usernameInterface");
-        mainInterface = GameObject.Find("mainInterface");
-
-        PresentationButtons = GameObject.FindGameObjectWithTag("PresentationButtons");
         
+        // Désactivation de l'interface de présentation ( s'activera lorsque l'utilisateur sera dans une salle ET qu'il sera maître de salle ) 
         PresentationButtons.SetActive(false);
         
         NetworkManager = GameObject.Find("Network Manager");
         networkManagerScript = NetworkManager.GetComponent<NetworkManager>();
         
-        PlayerUI = GameObject.FindGameObjectWithTag("PlayerUI");
-        ActualRoom = GameObject.Find("ActualRoomText");
-        ButtonConnect = GameObject.Find("Connect2ServerButton");
-        ServerStatus = GameObject.Find("DisconnectedText");
-
         ButtonConnectText = ButtonConnect.GetComponent<Button>().GetComponentInChildren<Text>();
         serverStatusText = ServerStatus.GetComponent<Text>();
 
-        ServerInput = GameObject.Find("ServerInput").GetComponent<InputField>();
-        RoomInput = GameObject.Find("RoomInput").GetComponent<InputField>();
-        micStatusText = GameObject.Find("MicStatusButtonText").GetComponent<Text>();
-        
-        // On rend l'interface principale invisible
+        // On rend l'interface principale non visible.
         PlayerUI.SetActive(false);
         KeyBoard.SetActive(false);
         mainInterface.SetActive(false);
@@ -84,14 +89,13 @@ public class FixedUI : MonoBehaviour
         // Pour le développement
         ServerInput.text = "172.30.16.11";
         RoomInput.text = "1";
-
-
     }
 
-    // Mise à jour des données affichées sur l'interface du joueur lors de son affichage
+    // Mise à jour des données affichées sur l'interface du joueur lorsqu'il appuie sur le bouton pour afficher l'interface
+    // Les données sont donc mis à jour à juste avant d'afficher l'interface
     public void HasOpenedInterface()
     {
-        // Si l'interface affiché est l'interface principale ( donc après avoir donné un username )
+        // Si l'interface affiché est l'interface principale ( donc après avoir fourni un username )
         if (mainInterface.activeSelf)
         {
             if (PhotonNetwork.IsConnectedAndReady)
@@ -121,34 +125,6 @@ public class FixedUI : MonoBehaviour
             }
         }
         
-    }
-
-    // Clavier pour insérer l'adresse IP du serveur
-    public void insertInput(string character)
-    {
-        InputField InputServer = GameObject.Find("ServerInput").GetComponent<InputField>();
-        if (character == "delete" && InputServer.text.Length > 0)
-        {
-            InputServer.text = InputServer.text.Remove(InputServer.text.Length - 1);
-        }
-        else if (character != "delete")
-        {
-            InputServer.text += character;
-        }
-    }
-
-    // Clavier pour insérer le numéro de la salle
-    public void insertInputRoom(string character)
-    {
-        InputField RoomInput = GameObject.Find("RoomInput").GetComponent<InputField>();
-        if (character == "delete" && RoomInput.text.Length > 0)
-        {
-            RoomInput.text = RoomInput.text.Remove(RoomInput.text.Length - 1);
-        }
-        else if (character != "delete")
-        {
-            RoomInput.text += character;
-        }
     }
 
     // Connexion au serveur
@@ -182,14 +158,25 @@ public class FixedUI : MonoBehaviour
         GameObject.Find("ErrorStatusText").GetComponent<Text>().text = message;
     }
 
-
+    // Confirmation du nom d'utilisateur entré
     public void confirmUsername()
     {
-        GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username = GameObject.Find("InputUsernameText").GetComponent<Text>().text;
-        usernameInterface.SetActive(false);
-        mainInterface.SetActive(true);
+        string usernameText = GameObject.Find("InputUsernameText").GetComponent<Text>().text;
+        if (usernameText.Length == 0)
+        {
+            errorStatus("A username is required.");
+        }
+        else
+        {
+            GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>().username = GameObject.Find("InputUsernameText").GetComponent<Text>().text;
+            errorStatus("");
+            usernameInterface.SetActive(false);
+            mainInterface.SetActive(true);
+        }
+        
     }
 
+    // Activation/Désactivation du microphone
     public void enableDisableMic()
     {
         bool isDone;
@@ -231,6 +218,11 @@ public class FixedUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Temps nécessaire pour pouvoir réutiliser un des boutons de la manette
+        // Sinon on a un FPS important, le fait d'appuyer légérement et une seule fois
+        // sur le bouton peut provoquer l'ouverture et la fermeture 
+        // de l'interface de multiple fois
+
         if (availableDelay > 0)
         {
             availableDelay -= 1;

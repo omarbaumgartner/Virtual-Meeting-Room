@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
 
+// Script permettant de gérer toutes les méthodes reliées au réseau
+// Notamment la connexion, déconnexion, création de salle...
 public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quand il y'a connexion/deconnexion...
 {
     private GameObject Interface;
@@ -22,7 +24,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         InterfaceScript = Interface.GetComponent<FixedUI>();
         usersPannelScript = GameObject.Find("usersPannel").GetComponent<userlistManager>();
         keepAliveScript = GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>();
-
         PhotonNetwork.AutomaticallySyncScene = true;
     }
 
@@ -139,10 +140,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         roomOptions.MaxPlayers = 10;
         roomOptions.IsVisible = true;
         roomOptions.IsOpen = true;
-        //CreateRoom();
-        //Debug.Log("Connecting to " + PhotonNetwork.ServerAddress); 
-        //PhotonNetwork.LoadLevel(1);
-        //PhotonNetwork.JoinOrCreateRoom("Room 1", roomOptions, TypedLobby.Default);
     }
 
     // Déclencheur une fois la connexion au serveur est établie

@@ -5,17 +5,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Script permettant la gestion de la liste des utilisateurs affichée dans l'IU
+// Fournit aussi les méthodes permettant d'exclure un utilisateur, ou de passer son rôle de maître de salle à un autre utilisateur
+
 public class userlistManager : MonoBehaviour
 {
     public GameObject grid;
     public GameObject userPrefab;
     public FixedUI FixedUIScript;
+
     // Start is called before the first frame update
     void Start()
     {
         FixedUIScript = GameObject.Find("FixedUI").GetComponent<FixedUI>();
     }
 
+    // Initialisation de la liste des joueurs
     public void initList(Dictionary<int, Player> usersList)
     {
         foreach (Transform child in grid.transform)
@@ -29,9 +34,9 @@ public class userlistManager : MonoBehaviour
         }
     }
 
+    // Ajout d'un utilisateur dans la liste ( lorsqu'il rejoint une salle ) 
     public void addElement(string id, string username)
     {
-        Debug.Log("Adding new element with id :" + id + " and username : " + username);
         GameObject newUserElement = Instantiate(userPrefab, new Vector3(grid.transform.position.x, grid.transform.position.y, grid.transform.position.z), grid.transform.rotation);
         newUserElement.transform.SetParent(grid.transform);
         newUserElement.name = username + '_' + id;
@@ -46,9 +51,10 @@ public class userlistManager : MonoBehaviour
             giveRights(id, username);
         });
     }
+    
+    // Suppression d'un utilisateur de la liste ( lorsqu'il quittte la salle )
     public void removeElement(string id, string username)
     {
-        Debug.Log("Removing element with id :" + id + " and username : " + username);
         GameObject user = GameObject.Find(username + '_' + id);
         if (user != null)
         {
@@ -56,6 +62,7 @@ public class userlistManager : MonoBehaviour
         }
     }
 
+    // Transfert de permissions à un utilisateur
     public void giveRights(string id, string username)
     {
         Debug.Log("Giving lead user with username " + username + " and id : " + id);
@@ -71,7 +78,6 @@ public class userlistManager : MonoBehaviour
                     //PhotonNetwork.SetMasterClient(player.Value);
                     //PhotonView photonView;
                     //photonView.RPC("OnMasterChanged", RpcTarget.All);
-
                 }
             }
         }
@@ -88,22 +94,16 @@ public class userlistManager : MonoBehaviour
         // Afficher Diapo
     }
 
+    // Exclusion d'un utilisateur de la salle
     public void kickUser(string id, string username)
     {
-        Debug.Log("Kicking user with username " + username + " and id : " + id);
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("Is Master");
             Dictionary<int, Player> players = PhotonNetwork.CurrentRoom.Players;
             foreach (KeyValuePair<int, Player> player in players)
             {
-                Debug.Log(player.Value.UserId);
-                Debug.Log(id);
-                Debug.Log(player.Value.NickName);
-                Debug.Log(username);
                 if (player.Value.UserId == id && player.Value.NickName == username)
                 {
-                    Debug.Log("Kicking user confirmed");
                     PhotonNetwork.CloseConnection(player.Value);
                 }
             }
@@ -115,6 +115,7 @@ public class userlistManager : MonoBehaviour
 
     }
 
+    // Suppression de tous les éléménts dans la liste ( lorsque l'utilisateur quitte une salle )
     public void clearList()
     {
         foreach (Transform child in grid.transform)
@@ -122,6 +123,7 @@ public class userlistManager : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
+
     // Update is called once per frame
     void Update()
     {

@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// Script permettant d'activer ou de désactiver la transmission du son venant du microphone vers les autres utilisateurs
+// ( Est utilisé au niveau de l'IU lorsque l'on appuie sur le bouton ON/OFF ) 
 public class NetworkVoiceManager : MonoBehaviour
 {
     Recorder Microphone;
@@ -22,8 +25,6 @@ public class NetworkVoiceManager : MonoBehaviour
 
     public bool changeTransmitStatus(bool status)
     {
-        Debug.Log("Mic driver used : " + Microphone.UnityMicrophoneDevice);
-        //Microphone.is
         try
         {
             Microphone.TransmitEnabled = status;

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
+// Script permettant de concorder les mouvements du jouer avec celui de son avatar
+
 [System.Serializable]
 public class VRMAP
 {
@@ -17,6 +20,8 @@ public class VRMAP
         rigTarget.rotation = VRTarget.rotation * Quaternion.Euler(trackingRotationOffset);
     }
 }
+
+
 
 public class ViveMovementAnimator : MonoBehaviour
 {
@@ -45,7 +50,7 @@ public class ViveMovementAnimator : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        //if (photonView.IsMine || m_Scene.name == "LobbyScene")
+        // IsMine = Ne bouge que l'avatar qui est destiné au joueur
         if (photonView.IsMine)
         {
             // Move body according to head

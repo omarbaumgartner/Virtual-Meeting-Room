@@ -2,6 +2,7 @@
 using Photon.Pun;
 using TMPro;
 
+// Script permetttant de visualiser les mouvements du joueur ( localement ) sur le réseau
 public class NetworkPlayerViewer : MonoBehaviour
 {
     public Transform head;
