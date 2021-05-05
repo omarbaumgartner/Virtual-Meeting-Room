@@ -26,6 +26,7 @@ public class FixedUI : MonoBehaviour
     public Text ButtonConnectText;
     public Text serverStatusText;
     public Text micStatusText;
+    public Text errorStatusText;
 
     public GameObject KeyBoard;
     public GameObject PlayerCamera;
@@ -65,6 +66,7 @@ public class FixedUI : MonoBehaviour
         ServerInput = GameObject.Find("ServerInput").GetComponent<InputField>();
         RoomInput = GameObject.Find("RoomInput").GetComponent<InputField>();
         micStatusText = GameObject.Find("MicStatusButtonText").GetComponent<Text>();
+        errorStatusText = GameObject.Find("ErrorStatusText").GetComponent<Text>();
 
         // Désactivation des drumsticks, les pointers sont activés
         foreach (GameObject drumStick in drumSticks)
@@ -155,7 +157,7 @@ public class FixedUI : MonoBehaviour
     // Affichage d'un message sur l'interface utilisateur
     public void errorStatus(string message)
     {
-        GameObject.Find("ErrorStatusText").GetComponent<Text>().text = message;
+        errorStatusText.text = message;
     }
 
     // Confirmation du nom d'utilisateur entré

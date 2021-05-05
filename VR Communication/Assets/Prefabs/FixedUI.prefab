@@ -395,6 +395,7 @@ MonoBehaviour:
   ButtonConnectText: {fileID: 0}
   serverStatusText: {fileID: 0}
   micStatusText: {fileID: 0}
+  errorStatusText: {fileID: 0}
   KeyBoard: {fileID: 760005547319025279}
   PlayerCamera: {fileID: 0}
   distanceFromCamera: 3.5
@@ -402,6 +403,8 @@ MonoBehaviour:
   usernameInterface: {fileID: 0}
   mainInterface: {fileID: 0}
   openDelay: 30
+  switchAvailableDelay: 0
+  switchDelay: 30
 --- !u!1 &1179935790249199917
 GameObject:
   m_ObjectHideFlags: 0
@@ -2193,7 +2196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.63318795, g: 0.671245, b: 0.8773585, a: 0.11372549}
+  m_Color: {r: 0.63318795, g: 0.671245, b: 0.8773585, a: 0.49019608}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
