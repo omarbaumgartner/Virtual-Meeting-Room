@@ -16,6 +16,7 @@ TagManager:
   - LeftHand
   - FixedUI
   - Lights
+  - Chair
   layers:
   - Default
   - TransparentFX
