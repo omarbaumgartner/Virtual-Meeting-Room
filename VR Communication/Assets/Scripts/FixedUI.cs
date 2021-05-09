@@ -41,6 +41,8 @@ public class FixedUI : MonoBehaviour
     public GameObject usernameInterface;
     public GameObject mainInterface;
 
+    public userlistManager usersPannelScript;
+
     // Temps avant de pouvoir fermer ou ouvrir l'interface ( en fps )
     private int availableDelay;
     public int openDelay = 30;
@@ -50,7 +52,7 @@ public class FixedUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        usersPannelScript = GameObject.FindGameObjectWithTag("usersPannel").GetComponent<userlistManager>();
         RoomActionText = GameObject.Find("CreateJoinRoomButton").GetComponent<Button>().GetComponentInChildren<Text>();
         vivePointers = GameObject.FindGameObjectWithTag("VivePointers");
         drumSticks = GameObject.FindGameObjectsWithTag("DrumStick");
@@ -89,7 +91,7 @@ public class FixedUI : MonoBehaviour
         mainInterface.SetActive(false);
 
         // Pour le développement
-        ServerInput.text = "172.30.16.11";
+        ServerInput.text = "192.168.1.12";
         RoomInput.text = "1";
     }
 

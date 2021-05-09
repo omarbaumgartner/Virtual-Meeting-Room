@@ -14,6 +14,8 @@ public class Draggable : GrabbableBase<Draggable.Grabber>
     , IDragHandler
     , IEndDragHandler
 {
+
+
     [Serializable]
     public class UnityEventDraggable : UnityEvent<Draggable> { }
 
@@ -204,6 +206,7 @@ public class Draggable : GrabbableBase<Draggable.Grabber>
         {
             currentGrabber.hitDistance = Mathf.Max(0f, currentGrabber.hitDistance + scrollDelta.y);
         }
+        
     }
 
     public virtual void OnDrag(PointerEventData eventData) { }

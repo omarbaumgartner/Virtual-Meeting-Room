@@ -161,9 +161,9 @@ namespace HTC.UnityPlugin.Vive
                 grabRigidbody.velocity = Vector3.zero;
                 grabRigidbody.angularVelocity = Vector3.zero;
             }
-            if(targetPose.pos.z < 21.98f && targetPose.pos.z > 10.6f)
-            transform.position = new Vector3(transform.position.x, transform.position.y, targetPose.pos.z);
-            //transform.rotation = targetPose.rot;
+
+            transform.position = targetPose.pos;
+            transform.rotation = targetPose.rot;
         }
 
         protected void RecordLatestPosesForDrop(float currentTime, float recordLength)

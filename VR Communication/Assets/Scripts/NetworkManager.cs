@@ -14,7 +14,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     private FixedUI InterfaceScript;
     private userlistManager usersPannelScript;
     private KeepAliveObject keepAliveScript;
-    private GameObject PresentationButtonsGO;
+    private Vector3 DiapoBoardPosition = new Vector3(31.79f, 13.39f, 21.87f);
 
 
     // Start is called before the first frame update
@@ -22,7 +22,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     {
         Interface = GameObject.Find("FixedUI");
         InterfaceScript = Interface.GetComponent<FixedUI>();
-        usersPannelScript = GameObject.Find("usersPannel").GetComponent<userlistManager>();
         keepAliveScript = GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>();
         PhotonNetwork.AutomaticallySyncScene = true;
     }
@@ -176,15 +175,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         // Initialiser la liste des utilisateurs déjà présents
         base.OnJoinedRoom();
         Dictionary<int, Player> players = PhotonNetwork.CurrentRoom.Players;
-        usersPannelScript.initList(players);
+        InterfaceScript.usersPannelScript.initList(players);
         InterfaceScript.RoomActionText.text = "Leave";
         InterfaceScript.ActualRoom.GetComponent<Text>().text = PhotonNetwork.CurrentRoom.Name;
-
-        Debug.Log("Number of players in room : " + PhotonNetwork.CurrentRoom.Players.Count);
-        Debug.Log("Joined room : " + PhotonNetwork.CurrentRoom.Name);
-
+        //Debug.Log("Number of players in room : " + PhotonNetwork.CurrentRoom.Players.Count);
+        //Debug.Log("Joined room : " + PhotonNetwork.CurrentRoom.Name);
         //PhotonNetwork.LoadLevel(1);
-
     }
 
     // Déclencheur lorsqu'on quitte une salle
@@ -193,7 +189,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         base.OnLeftRoom();
         InterfaceScript.RoomActionText.text = "Join";
         InterfaceScript.ActualRoom.GetComponent<Text>().text = "Lobby";
-        usersPannelScript.clearList();
+        InterfaceScript.usersPannelScript.clearList();
         if (InterfaceScript.PresentationButtons != null)
         {
             InterfaceScript.PresentationButtons.SetActive(false);
@@ -206,30 +202,44 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     public override void OnCreatedRoom()
     {
         base.OnCreatedRoom();
-        diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", transform.position, transform.rotation);
+
+        diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", DiapoBoardPosition, Quaternion.identity);
         diapoPrefab.name = "DiapoBoard";
+        if (diapoPrefab.GetComponent<PhotonView>().IsMine)
+        {
+            diapoPrefab.GetComponent<Draggable>().enabled = true;
+        }
+        else {
+            diapoPrefab.GetComponent<Draggable>().enabled = false;
+        }
         Debug.Log("Room created and Board inited");
     }
-
-
 
     // If a player joined the room
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        usersPannelScript.addElement(newPlayer.UserId, newPlayer.NickName);
+        InterfaceScript.usersPannelScript.addElement(newPlayer.UserId, newPlayer.NickName, newPlayer.IsMasterClient);
         base.OnPlayerEnteredRoom(newPlayer);
         Debug.Log("A new player joined the room");
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        usersPannelScript.removeElement(otherPlayer.UserId, otherPlayer.NickName);
+        InterfaceScript.usersPannelScript.removeElement(otherPlayer.UserId, otherPlayer.NickName);
         if (GameObject.Find("DiapoBoard") == null)
         {
             if (PhotonNetwork.IsMasterClient == true)
             {
-                diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", transform.position, transform.rotation);
+                diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", transform.position, Quaternion.identity);
                 diapoPrefab.name = "DiapoBoard";
+                if (diapoPrefab.GetComponent<PhotonView>().IsMine)
+                {
+                    diapoPrefab.GetComponent<Draggable>().enabled = true;
+                }
+                else
+                {
+                    diapoPrefab.GetComponent<Draggable>().enabled = false;
+                }
             }
         }
         base.OnPlayerLeftRoom(otherPlayer);
@@ -249,7 +259,5 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         Debug.Log("Failed joining room");
         InterfaceScript.errorStatus(message);
     }
-
-
 
 }

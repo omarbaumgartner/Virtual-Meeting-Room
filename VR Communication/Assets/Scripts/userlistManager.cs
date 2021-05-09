@@ -18,6 +18,7 @@ public class userlistManager : MonoBehaviour
     void Start()
     {
         FixedUIScript = GameObject.Find("FixedUI").GetComponent<FixedUI>();
+
     }
 
     // Initialisation de la liste des joueurs
@@ -30,28 +31,35 @@ public class userlistManager : MonoBehaviour
 
         foreach (KeyValuePair<int, Player> player in usersList)
         {
-            addElement(player.Value.UserId, player.Value.NickName);
+            addElement(player.Value.UserId, player.Value.NickName, player.Value.IsMasterClient);
         }
     }
 
     // Ajout d'un utilisateur dans la liste ( lorsqu'il rejoint une salle ) 
-    public void addElement(string id, string username)
+    [System.Obsolete]
+    public void addElement(string id, string username, bool isMaster)
     {
         GameObject newUserElement = Instantiate(userPrefab, new Vector3(grid.transform.position.x, grid.transform.position.y, grid.transform.position.z), grid.transform.rotation);
+        if (isMaster)
+        {
+            newUserElement.transform.FindChild("UsernameButton").GetComponent<Image>().color = new Color(255, 255, 0, 255);
+        }
         newUserElement.transform.SetParent(grid.transform);
         newUserElement.name = username + '_' + id;
         newUserElement.transform.localScale = new Vector3(1, 1, 1);
         newUserElement.transform.Find("UsernameButton").GetComponentInChildren<Text>().text = username;
         Button kickButton = newUserElement.transform.Find("KickButton").GetComponent<Button>();
-        kickButton.onClick.AddListener(() => { 
-            kickUser(id,username); 
+        kickButton.onClick.AddListener(() =>
+        {
+            kickUser(id, username);
         });
         Button leadButton = newUserElement.transform.Find("SetMaster").GetComponent<Button>();
-        leadButton.onClick.AddListener(() => {
+        leadButton.onClick.AddListener(() =>
+        {
             giveRights(id, username);
         });
     }
-    
+
     // Suppression d'un utilisateur de la liste ( lorsqu'il quittte la salle )
     public void removeElement(string id, string username)
     {
@@ -75,7 +83,7 @@ public class userlistManager : MonoBehaviour
                 {
                     Debug.Log("Giving rights to user confirmed");
                     // To do passer le lead.
-                    //PhotonNetwork.SetMasterClient(player.Value);
+                    PhotonNetwork.SetMasterClient(player.Value);
                     //PhotonView photonView;
                     //photonView.RPC("OnMasterChanged", RpcTarget.All);
                 }
@@ -92,7 +100,23 @@ public class userlistManager : MonoBehaviour
     public void OnMasterChanged()
     {
         // Afficher Diapo
+        if (FixedUIScript.PresentationButtons != null)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                FixedUIScript.PresentationButtons.SetActive(true);
+            }
+            else
+            {
+                FixedUIScript.PresentationButtons.SetActive(false);
+            }
+        }
+        Dictionary<int, Player> players = PhotonNetwork.CurrentRoom.Players;
+        initList(players);
+
     }
+
+
 
     // Exclusion d'un utilisateur de la salle
     public void kickUser(string id, string username)

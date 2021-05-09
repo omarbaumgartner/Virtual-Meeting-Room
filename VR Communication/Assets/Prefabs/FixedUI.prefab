@@ -1947,7 +1947,6 @@ GameObject:
   - component: {fileID: 1179935792064822555}
   - component: {fileID: 1179935792064822553}
   - component: {fileID: 1179935792064822554}
-  - component: {fileID: 1179935792064822532}
   m_Layer: 5
   m_Name: PlayerUI
   m_TagString: Untagged
@@ -1999,19 +1998,6 @@ Canvas:
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &1179935792064822554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1179935792064822533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d518a00ceacb57f4d94b3cc806d60f40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
---- !u!114 &1179935792064822532
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
