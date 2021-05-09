@@ -16,8 +16,11 @@ TagManager:
   - LeftHand
   - FixedUI
   - Lights
+<<<<<<< HEAD
   - Chair
   - usersPannel
+=======
+>>>>>>> parent of c3aceb7 (Déplacement du tableau de présentation + Fixes)
   layers:
   - Default
   - TransparentFX
