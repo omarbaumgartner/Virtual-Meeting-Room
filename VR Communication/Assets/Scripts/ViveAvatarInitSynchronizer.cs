@@ -26,6 +26,11 @@ public class ViveAvatarInitSynchronizer : MonoBehaviour
             VRigScript.head.VRTarget = camera.transform;
             VRigScript.leftHand.VRTarget = LeftHand.transform;
             VRigScript.rightHand.VRTarget = RightHand.transform;
+            ViveMovementAnimator animation = gameObject.GetComponent<ViveMovementAnimator>();
+            animation.headBodyOffset.x = 0;
+            animation.headBodyOffset.y = -1.65f;
+            animation.headBodyOffset.z = 0;
+            Debug.Log(animation.headBodyOffset);
         }
         else
         {

@@ -41,6 +41,13 @@ public class FixedUI : MonoBehaviour
     public GameObject usernameInterface;
     public GameObject mainInterface;
 
+    [SerializeField]
+    public GameObject rightPointer;
+    public GameObject leftPointer;
+
+
+    public GameObject viveCurvedPointers;
+
     public userlistManager usersPannelScript;
 
     // Temps avant de pouvoir fermer ou ouvrir l'interface ( en fps )
@@ -52,6 +59,7 @@ public class FixedUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         usersPannelScript = GameObject.FindGameObjectWithTag("usersPannel").GetComponent<userlistManager>();
         RoomActionText = GameObject.Find("CreateJoinRoomButton").GetComponent<Button>().GetComponentInChildren<Text>();
         vivePointers = GameObject.FindGameObjectWithTag("VivePointers");
@@ -75,7 +83,9 @@ public class FixedUI : MonoBehaviour
         {
             drumStick.SetActive(false);
         }
-        
+        rightPointer.SetActive(false);
+        leftPointer.SetActive(false);
+
         // Désactivation de l'interface de présentation ( s'activera lorsque l'utilisateur sera dans une salle ET qu'il sera maître de salle ) 
         PresentationButtons.SetActive(false);
         
@@ -89,9 +99,9 @@ public class FixedUI : MonoBehaviour
         PlayerUI.SetActive(false);
         KeyBoard.SetActive(false);
         mainInterface.SetActive(false);
-
+        viveCurvedPointers.SetActive(true);
         // Pour le développement
-        ServerInput.text = "192.168.1.12";
+        ServerInput.text = "172.30.16.11";
         RoomInput.text = "1";
     }
 
@@ -263,6 +273,10 @@ public class FixedUI : MonoBehaviour
                 availableDelay = openDelay;
                 PlayerUI.SetActive(false);
                 KeyBoard.SetActive(false);
+                rightPointer.SetActive(false);
+                leftPointer.SetActive(false);
+                viveCurvedPointers.SetActive(true);
+                //foreach (ViveInputVirtualButton script in curvedScripts) script.enabled = true;
             }
             else if (!KeyBoard.activeSelf && availableDelay == 0)
             {
@@ -274,7 +288,10 @@ public class FixedUI : MonoBehaviour
                 PlayerUI.SetActive(true);
                 KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
                 KeyBoard.SetActive(true);
-
+                rightPointer.SetActive(true);
+                leftPointer.SetActive(true);
+                viveCurvedPointers.SetActive(false);
+                //foreach (ViveInputVirtualButton script in curvedScripts) script.enabled = false;
                 HasOpenedInterface();
             }
         }

@@ -7,13 +7,14 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
 {
     // Création du joueur lorsqu'il se connecte à une room
     private GameObject spawnedPlayerPrefab;
+    ViveMovementAnimator animation;
 
-    
     // Se déclenche lorsqu'un joueur entre dans une salle
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
         // Instantiantion de l'avatar du joueur
+
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
         PhotonView view = spawnedPlayerPrefab.GetComponent<PhotonView>();
         // Attribution du tag isMine si le joueur entrant dans la salle est l'utilisateur de l'application
@@ -35,6 +36,15 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
         if(spawnedPlayerPrefab != null)
         {
             PhotonNetwork.Destroy(spawnedPlayerPrefab);
+        }
+    }
+
+
+    private void Update()
+    {
+        if (animation)
+        {
+            Debug.Log(animation.headBodyOffset);
         }
     }
 

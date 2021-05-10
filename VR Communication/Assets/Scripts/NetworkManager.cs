@@ -24,6 +24,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         InterfaceScript = Interface.GetComponent<FixedUI>();
         keepAliveScript = GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>();
         PhotonNetwork.AutomaticallySyncScene = true;
+
+
     }
 
     // Server connection
@@ -205,13 +207,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
 
         diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", DiapoBoardPosition, Quaternion.identity);
         diapoPrefab.name = "DiapoBoard";
-        if (diapoPrefab.GetComponent<PhotonView>().IsMine)
-        {
-            diapoPrefab.GetComponent<Draggable>().enabled = true;
-        }
-        else {
-            diapoPrefab.GetComponent<Draggable>().enabled = false;
-        }
+        diapoPrefab.GetComponent<Draggable>().enabled = true;
         Debug.Log("Room created and Board inited");
     }
 
@@ -232,14 +228,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
             {
                 diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", transform.position, Quaternion.identity);
                 diapoPrefab.name = "DiapoBoard";
-                if (diapoPrefab.GetComponent<PhotonView>().IsMine)
-                {
-                    diapoPrefab.GetComponent<Draggable>().enabled = true;
-                }
-                else
-                {
-                    diapoPrefab.GetComponent<Draggable>().enabled = false;
-                }
+                diapoPrefab.GetComponent<Draggable>().enabled = true;
             }
         }
         base.OnPlayerLeftRoom(otherPlayer);

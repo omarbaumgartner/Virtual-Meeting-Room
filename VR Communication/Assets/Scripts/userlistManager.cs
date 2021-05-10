@@ -13,12 +13,13 @@ public class userlistManager : MonoBehaviour
     public GameObject grid;
     public GameObject userPrefab;
     public FixedUI FixedUIScript;
+    PhotonView photonView;
 
     // Start is called before the first frame update
     void Start()
     {
+        photonView = gameObject.GetComponent<PhotonView>();
         FixedUIScript = GameObject.Find("FixedUI").GetComponent<FixedUI>();
-
     }
 
     // Initialisation de la liste des joueurs
@@ -85,7 +86,7 @@ public class userlistManager : MonoBehaviour
                     // To do passer le lead.
                     PhotonNetwork.SetMasterClient(player.Value);
                     //PhotonView photonView;
-                    //photonView.RPC("OnMasterChanged", RpcTarget.All);
+                    photonView.RPC("OnMasterChanged", RpcTarget.All);
                 }
             }
         }
