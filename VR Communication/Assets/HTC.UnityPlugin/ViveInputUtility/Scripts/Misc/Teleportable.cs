@@ -14,6 +14,8 @@ using UnityEngine.Serialization;
 using Valve.VR;
 #endif
 
+
+
 namespace HTC.UnityPlugin.Vive
 {
     [AddComponentMenu("VIU/Teleportable", 3)]
@@ -345,8 +347,20 @@ namespace HTC.UnityPlugin.Vive
             }
         }
 #else
+
+        void Start()
+        {
+            //Could also be in Awake
+            //GameObject.Find is not optimal, but used once at start of a game is perfectly fine
+
+        }
+
         public IEnumerator StartTeleport(RaycastResult hitResult, Vector3 position, Quaternion rotation, float delay)
         {
+            Debug.Log("Player teleported1111");
+            GameObject a = GameObject.Find("Network Manager");
+            Debug.Log("wiw");
+            Debug.Log(a.name);
             if (delay > 0) { yield return new WaitForSeconds(delay); }
 
             yield return new WaitForEndOfFrame(); // to avoid from rendering guideline in wrong position

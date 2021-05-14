@@ -5,6 +5,7 @@ using Photon.Realtime;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
+using MyNameSpace;
 
 // Script permettant de gérer toutes les méthodes reliées au réseau
 // Notamment la connexion, déconnexion, création de salle...
@@ -15,7 +16,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     private userlistManager usersPannelScript;
     private KeepAliveObject keepAliveScript;
     private Vector3 DiapoBoardPosition = new Vector3(31.79f, 13.39f, 21.87f);
-
+    private NetworkChairManager chairManagerScript;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         Interface = GameObject.Find("FixedUI");
         InterfaceScript = Interface.GetComponent<FixedUI>();
         keepAliveScript = GameObject.Find("KeepAliveEnvironement").GetComponent<KeepAliveObject>();
+        chairManagerScript = gameObject.GetComponent<NetworkChairManager>();
         PhotonNetwork.AutomaticallySyncScene = true;
 
 
@@ -171,6 +173,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         base.OnDisconnected(cause);
     }
 
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        Debug.Log("Master has been changed");
+        InterfaceScript.usersPannelScript.OnMasterChanged();
+        // as master (tutor) has left force all students to leave tutorial
+
+    }
+
     // Déclencheur lorsqu'on rejoint une salle
     public override void OnJoinedRoom()
     {
@@ -204,7 +215,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     public override void OnCreatedRoom()
     {
         base.OnCreatedRoom();
-
         diapoPrefab = PhotonNetwork.Instantiate("DiapoBoard", DiapoBoardPosition, Quaternion.identity);
         diapoPrefab.name = "DiapoBoard";
         diapoPrefab.GetComponent<Draggable>().enabled = true;
@@ -215,6 +225,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         InterfaceScript.usersPannelScript.addElement(newPlayer.UserId, newPlayer.NickName, newPlayer.IsMasterClient);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Debug.Log("You're master, sending chairs updates to other players");
+            chairManagerScript.sendChairsInfos();
+        }
         base.OnPlayerEnteredRoom(newPlayer);
         Debug.Log("A new player joined the room");
     }
@@ -241,6 +256,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks // Permet de savoir quan
         Debug.Log("Failed creating room");
         InterfaceScript.errorStatus(message);
     }
+
+
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {

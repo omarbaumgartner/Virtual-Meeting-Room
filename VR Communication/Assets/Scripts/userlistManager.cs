@@ -8,7 +8,7 @@ using UnityEngine.UI;
 // Script permettant la gestion de la liste des utilisateurs affichée dans l'IU
 // Fournit aussi les méthodes permettant d'exclure un utilisateur, ou de passer son rôle de maître de salle à un autre utilisateur
 
-public class userlistManager : MonoBehaviour
+public class userlistManager : MonoBehaviourPunCallbacks
 {
     public GameObject grid;
     public GameObject userPrefab;
@@ -86,7 +86,6 @@ public class userlistManager : MonoBehaviour
                     // To do passer le lead.
                     PhotonNetwork.SetMasterClient(player.Value);
                     //PhotonView photonView;
-                    photonView.RPC("OnMasterChanged", RpcTarget.All);
                 }
             }
         }
@@ -96,22 +95,26 @@ public class userlistManager : MonoBehaviour
         }
     }
 
-    [PunRPC]
+
+
+
     // S'enclenche chez l'utilisateur qui reçoit le Master
     public void OnMasterChanged()
     {
-        // Afficher Diapo
-        if (FixedUIScript.PresentationButtons != null)
+
+        if (PhotonNetwork.IsMasterClient)
         {
-            if (PhotonNetwork.IsMasterClient)
+            // Afficher Diapo
+            if (FixedUIScript.PresentationButtons != null)
             {
                 FixedUIScript.PresentationButtons.SetActive(true);
             }
-            else
-            {
-                FixedUIScript.PresentationButtons.SetActive(false);
-            }
         }
+        else
+        {
+            FixedUIScript.PresentationButtons.SetActive(false);
+        }
+
         Dictionary<int, Player> players = PhotonNetwork.CurrentRoom.Players;
         initList(players);
 
