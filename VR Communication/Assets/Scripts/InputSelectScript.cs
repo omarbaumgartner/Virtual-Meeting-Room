@@ -14,7 +14,6 @@ public class InputSelectScript : MonoBehaviour
     void Start()
     {
         childText = gameObject.transform.GetChild(gameObject.transform.childCount - 1).gameObject;
-
     }
 
 

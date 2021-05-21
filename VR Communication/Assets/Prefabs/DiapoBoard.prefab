@@ -38,7 +38,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 7.951}
+  m_AnchoredPosition: {x: 0, y: 7.950989}
   m_SizeDelta: {x: 6, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6614077863344432349
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textureImage: {fileID: 6614077863766391486}
-  imageUrl: http://192.168.1.12:5000/shared
+  imageUrl: http://172.30.40.22:5000/shared
 --- !u!114 &6614077863344432323
 MonoBehaviour:
   m_ObjectHideFlags: 0

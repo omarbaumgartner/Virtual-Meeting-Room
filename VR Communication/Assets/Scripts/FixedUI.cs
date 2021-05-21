@@ -29,6 +29,7 @@ public class FixedUI : MonoBehaviour
     public Text errorStatusText;
 
     public GameObject KeyBoard;
+    public GameObject InstantiatedKeyBoard = null;
     public GameObject PlayerCamera;
     public float distanceFromCamera;
     public float heightFromCamera;
@@ -59,7 +60,8 @@ public class FixedUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        KeyBoard.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+        KeyBoard.transform.rotation = Quaternion.Euler(-30f, KeyBoard.transform.rotation.y, KeyBoard.transform.rotation.z);
         usersPannelScript = GameObject.FindGameObjectWithTag("usersPannel").GetComponent<userlistManager>();
         RoomActionText = GameObject.Find("CreateJoinRoomButton").GetComponent<Button>().GetComponentInChildren<Text>();
         vivePointers = GameObject.FindGameObjectWithTag("VivePointers");
@@ -97,11 +99,12 @@ public class FixedUI : MonoBehaviour
 
         // On rend l'interface principale non visible.
         PlayerUI.SetActive(false);
-        KeyBoard.SetActive(false);
+        //KeyBoard.SetActive(false);
         mainInterface.SetActive(false);
         viveCurvedPointers.SetActive(true);
         // Pour le développement
         ServerInput.text = "192.168.1.12";
+        // ServerInput.text =  "172.30.16.11";
         RoomInput.text = "1";
     }
 
@@ -269,17 +272,22 @@ public class FixedUI : MonoBehaviour
         // Afficher/Cacher l'interface en appuyant sur le bouton menu de la manette droite
         if (ViveInput.GetPress(HandRole.RightHand, ControllerButton.Menu) && !ViveInput.GetPress(HandRole.LeftHand, ControllerButton.Menu))
         {
-            if (KeyBoard.activeSelf && availableDelay == 0)
+            if (InstantiatedKeyBoard != null
+                //KeyBoard.activeSelf 
+                && availableDelay == 0)
             {
                 availableDelay = openDelay;
                 PlayerUI.SetActive(false);
-                KeyBoard.SetActive(false);
+                Destroy(InstantiatedKeyBoard);
+                InstantiatedKeyBoard = null;
+                //KeyBoard.SetActive(false);
                 rightPointer.SetActive(false);
                 leftPointer.SetActive(false);
                 viveCurvedPointers.SetActive(true);
                 //foreach (ViveInputVirtualButton script in curvedScripts) script.enabled = true;
             }
-            else if (!KeyBoard.activeSelf && availableDelay == 0)
+            else if ( //!KeyBoard.activeSelf 
+                InstantiatedKeyBoard == null && availableDelay == 0)
             {
                 // Pour que l'interface soit toujours en fance de la caméra
                 transform.eulerAngles = new Vector3(0, PlayerCamera.transform.eulerAngles.y, 0);
@@ -287,8 +295,14 @@ public class FixedUI : MonoBehaviour
                 transform.position = new Vector3(resultingPosition.x, transform.position.y, resultingPosition.z);
                 availableDelay = openDelay;
                 PlayerUI.SetActive(true);
-                KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
-                KeyBoard.SetActive(true);
+
+                Vector3 keyboardPos = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
+                //KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
+
+                
+                InstantiatedKeyBoard = Instantiate(KeyBoard, keyboardPos, Quaternion.Euler(KeyBoard.transform.rotation.x,gameObject.transform.rotation.y, KeyBoard.transform.rotation.z));
+
+                //KeyBoard.SetActive(true);
                 rightPointer.SetActive(true);
                 leftPointer.SetActive(true);
                 viveCurvedPointers.SetActive(false);
