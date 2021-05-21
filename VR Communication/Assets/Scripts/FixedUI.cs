@@ -101,7 +101,7 @@ public class FixedUI : MonoBehaviour
         mainInterface.SetActive(false);
         viveCurvedPointers.SetActive(true);
         // Pour le développement
-        ServerInput.text = "192.168.188.106";
+        ServerInput.text = "192.168.1.12";
         RoomInput.text = "1";
     }
 
