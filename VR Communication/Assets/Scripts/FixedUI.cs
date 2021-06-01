@@ -300,7 +300,7 @@ public class FixedUI : MonoBehaviour
                 //KeyBoard.transform.position = (RightHand.transform.position + LeftHand.transform.position) / 2 + RightHand.transform.forward * 0.5f;
 
                 
-                InstantiatedKeyBoard = Instantiate(KeyBoard, keyboardPos, Quaternion.Euler(KeyBoard.transform.rotation.x,gameObject.transform.rotation.y, KeyBoard.transform.rotation.z));
+                InstantiatedKeyBoard = Instantiate(KeyBoard, keyboardPos, Quaternion.Euler(-40.19f, PlayerCamera.transform.eulerAngles.y, 0));
 
                 //KeyBoard.SetActive(true);
                 rightPointer.SetActive(true);
