@@ -320,3 +320,22 @@
 2021-05-21 09:25:11,061 [11] INFO  Photon.LoadBalancing.MasterServer.GameServer.IncomingGameServerPeer - game server connection from 127.0.0.1:50639 established (id=2)
 2021-05-21 09:25:11,172 [12] WARN  Photon.LoadBalancing.Common.NodesReader - Internal address for node 0 unknown; using loop back
 2021-05-21 09:25:11,172 [12] INFO  Photon.LoadBalancing.Common.NodesReader - Node added: 0 = 127.0.0.1
+2021-06-02 23:12:22,438 [1] INFO  Photon.LoadBalancing.MasterServer.MasterApplication - TokenCreator intialized with an expiration of 02:46:40
+2021-06-02 23:12:23,102 [1] INFO  Photon.SocketServer.Diagnostics.HttpQueuePerformanceCounters - HTTP Queue performance counters successfully initialized
+2021-06-02 23:12:23,102 [1] INFO  Photon.SocketServer.Diagnostics.HttpQueuePerformanceCounters - Internal HTTP Queue performance counters successfully created
+2021-06-02 23:12:23,105 [1] INFO  Photon.Common.Authentication.Diagnostic.CustomAuthResultCounters - Start to initialize Photon: Custom Authentication Results performance counters
+2021-06-02 23:12:23,108 [1] INFO  Photon.Common.Authentication.Diagnostic.CustomAuthResultCounters - Photon: Custom Authentication Results performance counters successfully initialized
+2021-06-02 23:12:23,119 [1] WARN  Photon.Common.LoadBalancer.LoadBalancer`1 - Could not initialize LoadBalancer from configuration: Invalid configuration file C:\Users\omari\Documents\GitHub\Virtual-Meeting-Room\Photon Server\deploy\LoadBalancer.config. Using default settings... (Le fichier 'C:\Users\omari\Documents\GitHub\Virtual-Meeting-Room\Photon Server\deploy\LoadBalancer.config' est introuvable.)
+2021-06-02 23:12:23,398 [1] INFO  Photon.LoadBalancing.MasterServer.GameApplication - TokenCreator intialized with an expiration of 02:46:40
+2021-06-02 23:12:23,857 [1] INFO  Photon.LoadBalancing.MasterServer.GameApplication - Application {Default}/{Default} starts without Redis
+2021-06-02 23:12:23,930 [1] INFO  Photon.LoadBalancing.Common.NodesReader - Import nodes
+2021-06-02 23:12:23,932 [1] WARN  Photon.LoadBalancing.Common.NodesReader - C:\Users\omari\Documents\GitHub\Virtual-Meeting-Room\Photon Server\deploy\Nodes.txt does not exist, CurrentNodeId = 0
+2021-06-02 23:12:23,933 [1] INFO  Photon.LoadBalancing.Common.NodesReader - Watching C:\Users\omari\Documents\GitHub\Virtual-Meeting-Room\Photon Server\deploy\Nodes.txt
+2021-06-02 23:12:23,934 [1] INFO  Photon.LoadBalancing.MasterServer.MasterApplication - Current Node (nodeId=0) is the active master (leader)
+2021-06-02 23:12:23,935 [1] INFO  Photon.SocketServer.ApplicationBase - Application start: AppId=Master; AppPath=C:\Users\omari\Documents\GitHub\Virtual-Meeting-Room\Photon Server\deploy\LoadBalancing\Master, Type=Photon.LoadBalancing.MasterServer.MasterApplication 
+2021-06-02 23:12:23,978 [1] INFO  Photon.SocketServer.Diagnostics.CounterPublisher - CounterPublisher started publishing ExitGames.Diagnostics.Monitoring.CounterSamplePublisher to ExitGames.Diagnostics.Monitoring.CounterSampleSender
+2021-06-02 23:12:27,267 [12] INFO  Photon.LoadBalancing.MasterServer.GameServer.IncomingGameServerPeer - game server connection from 127.0.0.1:1541 established (id=2)
+2021-06-02 23:12:27,267 [15] INFO  Photon.LoadBalancing.MasterServer.GameServer.IncomingGameServerPeer - game server connection from 127.0.0.1:1542 established (id=3)
+2021-06-02 23:12:27,425 [14] INFO  Photon.LoadBalancing.MasterServer.GameServer.IncomingGameServerPeer - OnDisconnect: game server connection closed (connectionId=2, serverId={null}, reason=ClientDisconnect)
+2021-06-02 23:12:27,488 [14] WARN  Photon.LoadBalancing.Common.NodesReader - Internal address for node 0 unknown; using loop back
+2021-06-02 23:12:27,489 [14] INFO  Photon.LoadBalancing.Common.NodesReader - Node added: 0 = 127.0.0.1

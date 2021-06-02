@@ -1,10 +1,10 @@
 import env
-from env import toShareFolder,pathToProgram
+from env import toShareFolder,pathToProgram,popplerPath
 import comtypes
 import comtypes.client  # PPT to PDF
 from PIL import Image  # Merge images
 from pdf2image import convert_from_path  # PDF to IMG
-poppler_path = "C:\\Users\\omari\\Desktop\\PyConverter\\poppler-21.03.0\\Library\\bin"  # PDF to IMG
+poppler_path = popplerPath
 from os import listdir  # list files in directory
 import os  # Directory if not exists
 from os.path import isfile, join
@@ -41,7 +41,7 @@ def PPTtoPDF(filename, formatType=32):
     deck.Close()
     print("Destination : ", outputFileName)
     powerpoint.Quit()
-    print("Suppression du fichier",filename)
+    print("Suppression du fichier PPT",filename)
     os.remove(filename)
     
     return filename[:-5]+ ".pdf"
@@ -55,7 +55,7 @@ def PDFtoImgs(filename, poppler_path):
     for (i, page) in enumerate(images):
         page.save(filename+str(i+1)+'.png', 'PNG')
         images_list.append(filename+str(i+1)+'.png')
-    print("Suppression du fichier",filename)
+    print("Suppression du fichier PDF",filename)
     os.remove(filename)
     return images_list
 
@@ -78,7 +78,7 @@ def mergeImgs(filename, images_list):
     for (i,img) in enumerate(imgs):
         img_merge.paste(img, (0, y))
         y += img.height
-        print("Suppression du fichier",images_list[i])
+        print("Suppression du fichier image",images_list[i])
         os.remove(images_list[i])
     img_merge.save(toShareFolder+'/'+filename+'_merged.jpg')
 
